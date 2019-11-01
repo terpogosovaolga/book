@@ -1,0 +1,68 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context-3.0.xsd http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd">
+
+    <mvc:annotation-driven/>
+    <context:component-scan base-package="com.test.pluto" />
+    <mvc:view-controller path="/" view-name="index"/> <!--первой открывается страница index.jsp-->
+    <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver"> <!-- находит вьюшки -->
+        <property name="prefix" value ="/WEB-INF/jsp/"/> <!-- определяет папку -->
+        <property name="suffix" value=".jsp" /> <!-- определяет формат -->
+    </bean>
+    <bean name = "handlerMapping" class = "org.springframework.web.servlet.handler.BeanNameUrlHandlerMapping"/>
+    <bean name="dataSource" id="dataSource"
+          class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <property name="driverClassName" value="com.mysql.cj.jdbc.Driver" />
+        <property name="url" value="jdbc:mysql://localhost:3306/Books_shop?serverTimezone=Europe/Saratov" />
+        <property name="username" value="user" />
+        <property name="password" value="password" />
+    </bean>
+   <bean name="jdbcTemplate"
+          class = "org.springframework.jdbc.core.JdbcTemplate">
+        <constructor-arg ref = "dataSource"/>
+    </bean>
+    <bean name="bookDao"
+          class = "Dao.BookDao">
+        <constructor-arg ref="jdbcTemplate"/>
+    </bean>
+    <bean name="bookService"
+          class = "Services.BookService">
+        <constructor-arg ref="bookDao"/>
+    </bean>
+    <bean name="userDao"
+          class = "Dao.UserDao">
+        <constructor-arg ref="jdbcTemplate"/>
+    </bean>
+    <!--
+    <bean name="basketParagraphDao"
+          class="Dao.BasketParagraphDao">
+        <constructor-arg ref="jdbcTemplate"/>
+    </bean>-->
+    <bean name="userService"
+          class = "Services.UserService">
+        <constructor-arg ref="userDao"/>
+    </bean>
+    <!--<bean name="basketParagraphService"
+          class = "Services.BasketParagraphService">
+        <constructor-arg ref="basketParagraphDao"/>
+    </bean>
+
+    <bean name = "/"
+          class = "com.test.pluto.BookController" >
+    </bean>-->
+    <!--<bean name="/user"
+          class = "com.test.pluto.UserController">
+    </bean>-->
+
+</beans>
+
+
+<!-- шаблон добавления в books-->
+<!-- insert into books(Author_name, Author_secondname, Author_surname, Book_name, Year_of_writing, Publisher, Year_of_publishing,
+        Pages_number, Genre, Original_language, Price, Count, Description, Number_of_watchings)
+        values("Федор", "Михайлович", "Достоевский", "Преступление и наказание", 1865, "Эксмо", "2017", 331, "роман", "русский", 450.0, 354, "Великий роман великого писателя",
+        2500);-->
