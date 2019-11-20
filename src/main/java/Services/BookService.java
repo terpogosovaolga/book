@@ -3,10 +3,7 @@ package Services;
 import Dao.IBookDao;
 import classes.Book;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Bean;
-import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -32,48 +29,11 @@ public class BookService implements IBookService {
     @Override
     public List<Book> getBooksWithParams(Map<String, Object> attrs) {
         List<Book> result = bookDao.getAllBooks();
-        for (Map.Entry<String, Object> attr : attrs.entrySet())
+
+        int numberOfAttrs = attrs.size();
+        for (Book b: result)
         {
-            String key = attr.getKey();
-            Object value = attr.getValue();
-            switch(key) {
-                case ("Жанр"):
-                    for (Book book : result)
-                    {
-                        if (book.getGenre() != value)
-                            result.remove(book);
-                    }
-                    break;
-                case ("Издательство"):
-                    for (Book book : result)
-                    {
-                        if (book.getPublisher() != value)
-                            result.remove(book);
-                    }
-                    break;
-                case ("Язык"):
-                    if (value!="Язык оригинала") {
-                        for (Book book : result) {
-                            if (book.getLanguageOrOriginalLanguage() != value)
-                                result.remove(book);
-                        }
-                    }
-                    else{
-                        for (Book book : result) {
-                            if (book.translated()) // false = не переведено
-                            result.remove(book);
-                        }
-                    }
-                    break;
-                case ("Цена"):
-                    for (Book book : result) {
-                        if (book.getCout() != value)
-                            result.remove(book);
-                    }
-                    break;
-                default:
-                    break;
-            }
+
         }
         return result;
     }
@@ -97,28 +57,37 @@ public class BookService implements IBookService {
 
     @Override
     public Book getBookById(Long id) {
-        List<Book> allBooks = bookDao.getAllBooks();
-        for (Book book:allBooks)
-        {
-
-            if (book.getId()==id)
-                return book;
-        }
-        return null;
+        return bookDao.getBookById(id);
     }
 
     @Override
     public List<Book> getPopularBooks() {
-       List<Book> books = bookDao.getPopularBooks();
-       for(Book b : books)
-       {
-           System.out.println("POPULAR BOOKS IS : *******************************" + b.getName() + " " + b.getNumberOfWatching());
-       }
-       return books;
+        return bookDao.getPopularBooks();
     }
 
     @Override
+    public List<Book> getNewArrivals() {
+        return bookDao.getNewArrivals();
+    }
+
+    @Override // перенести к BasketParagraph
     public void addBookToBasket(Long bookId, Integer number, Long userId) {
 
+    }
+
+    @Override
+    public void admin_addBook(Book book) {
+        System.out.println("ФАМИЛИЯ АВТОРА: " + book.getAuthorSureName());
+        bookDao.admin_addBook(book);
+    }
+
+    @Override
+    public void increaseNumberOfWatchings(Long book_id) {
+        bookDao.increaseNumberOfWatchings(book_id);
+    }
+
+    @Override
+    public void updateBook(Book book) {
+        bookDao.updateBook(book);
     }
 }

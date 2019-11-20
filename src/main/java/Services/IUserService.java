@@ -7,10 +7,18 @@ import java.util.List;
 import java.util.Map;
 
 public interface IUserService {
-    public Boolean checkCard(String numberOfCard, String name, String cvc);
     public List<User> getUsers();
     public User getUserById(Long id);
-    public User editUser(Long id, Map<String,Object> attrs);
+
+    User editUser(User user);
+
+    User login(String email, String password);
+
     public Basket getBasket(Long userId);
 
+    String register(int accessCode, String email, String name, String fullname, String password);
+
+    long getNumberOfUsers();
+
+    void deleteUser(Object anonId);
 }

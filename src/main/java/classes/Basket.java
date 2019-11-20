@@ -14,17 +14,63 @@ public class Basket {
             delievered=del;
     }
 
+    public Basket() {}
+
 
     @NotNull
-    Long id;
+    private Long id;
 
     @NotNull
-    Long userId;
+    private Long userId;
 
     @NotNull
-    Double sum;
+    private Double sum;
 
-    Date dateOfSale;
+    private Date dateOfSale;
 
-    Boolean delievered;
+    private Boolean delievered;
+
+
+    @NotNull
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(@NotNull Long id) {
+        this.id = id;
+    }
+
+    @NotNull
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(@NotNull Long userId) {
+        this.userId = userId;
+    }
+
+    @NotNull
+    public Double getSum() {
+        return sum;
+    }
+
+    public void setSum(@NotNull Double sum) {
+        this.sum = sum;
+    }
+
+    public Date getDateOfSale() {
+        return dateOfSale;
+    }
+
+    public void setDateOfSale(Date dateOfSale) {
+        this.dateOfSale = dateOfSale;
+    }
+
+    public Boolean getDelievered() {
+        return delievered;
+    }
+
+    public void setDelievered(Boolean delievered) {
+        this.delievered = delievered;
+    }
 }

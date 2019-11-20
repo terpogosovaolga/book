@@ -1,24 +1,15 @@
 package Dao;
 
-import Dao.IUserDao;
 import classes.User;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Repository;
-import org.springframework.jdbc.core.support.JdbcDaoSupport;
 
-import javax.sql.DataSource;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.sql.*;
-import java.util.UUID;
-public class UserDao  extends JdbcDaoSupport implements IUserDao {
+
+public class UserDao implements IUserDao {
 
 
     RowMapper<User> mapper = (resultSet, rowNum) -> new User(resultSet.getLong("User_id"),
@@ -50,8 +41,7 @@ public class UserDao  extends JdbcDaoSupport implements IUserDao {
     @Override
     public User editUser(User user) {
 
-        assert jdbcTemplate.update("update  Users values (?, ?, ?, ?, ?, ?) where User_id = ?1", user.getId(), user.getAccessCode(), user.getName(), user.getFullName(), user.getEmail(), user.getPassword())>0;
-
+        assert jdbcTemplate.update("update  Users values (?, ?, ?, ?, ?, ?) where User_id = ?", new Object[]{user.getId(), user.getAccessCode(), user.getName(), user.getFullName(), user.getEmail(), user.getPassword()})>0;
         return getUserById(user.getId());
     }
 
@@ -85,4 +75,47 @@ public class UserDao  extends JdbcDaoSupport implements IUserDao {
                     user.getId(), user.getAccessCode(), user.getName(), user.getFullName(), user.getEmail(), user.getPassword())>0;
         }
 
+
+    @Override
+    public User login(String email, String password) {
+        try {
+          User user = jdbcTemplate.queryForObject("select * from Users where Email=?", new Object[]{email}, mapper);
+          return user;
+       }
+       catch (EmptyResultDataAccessException e)
+       {
+           return null;
+       }
     }
+
+    @Override
+    public String register(int accessCode, String name, String fullname, String email,  String password) {
+        try {
+            List<User> user = jdbcTemplate.query("select * from Users where Email=?", new Object[]{email}, mapper);
+            System.out.println("ID OF THIS ENAIL IS ");
+            System.out.println("we have " + user.size() + "mails like that");
+            if (user.size()>0)
+            {
+                System.out.println("we have this email in our base");
+                return "Пользователь с таким email уже зарегистрирован";
+            }
+        }
+        catch(EmptyResultDataAccessException e) {
+            System.out.println("we have no this email!");
+            jdbcTemplate.update("insert into users(Access_code, Name, Surname, Email, Password) values(?, ?, ?, ?, ?)",
+                                new Object[]{accessCode, name, fullname,email, password});
+            return "Поздравляем! Вы зарегистрированы!";
+        }
+        return "Поздравляем! Вы зарегистрированы!";
+    }
+
+    @Override
+    public long getLastId() {
+        return jdbcTemplate.queryForObject("select max(User_id) from Users", Long.class);
+    }
+
+    @Override
+    public void deleteUser(Object id) {
+        jdbcTemplate.update("delete  from Users where user_id = ?", new Object[]{id});
+    }
+}

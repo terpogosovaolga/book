@@ -2,18 +2,11 @@ package Dao;
 
 import classes.Book;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Bean;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.core.support.JdbcDaoSupport;
-import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Repository;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
 import java.util.List;
-public class BookDao extends JdbcDaoSupport implements IBookDao {
+public class BookDao implements IBookDao {
 
 
     RowMapper<Book> mapper = (resultSet, rowNum) -> new Book(resultSet.getLong("Book_id"),
@@ -23,7 +16,7 @@ public class BookDao extends JdbcDaoSupport implements IBookDao {
             resultSet.getString("Book_name"),
             resultSet.getInt("Year_of_writing"),
             resultSet.getString("Publisher"),
-            resultSet.getInt("Year_of_publishhing"),
+            resultSet.getInt("Year_of_publishing"),
             resultSet.getString("Translater"),
             resultSet.getInt("Pages_number"),
             resultSet.getString("Genre"),
@@ -51,13 +44,68 @@ public class BookDao extends JdbcDaoSupport implements IBookDao {
     @Override
     public List<Book> getPopularBooks() {
 
-        System.out.println("you entered in dao");
-        List<Book> popularBooks = jdbcTemplate.query("select * from Books where Number_of_watchings > 2000", mapper);;
-        System.out.println("you are in getPopularBooks() of BookDao: popular books are: ");
-        for (Book b : popularBooks)
-            System.out.println(b.getName());
-        return popularBooks;
+        return jdbcTemplate.query("select * from Books order by Number_of_watchings desc limit 10", mapper);
     }
 
+    @Override
+    public List<Book> getNewArrivals() {
+
+        return jdbcTemplate.query("select * from Books order by book_id desc limit 10", mapper);
+    }
+
+    @Override
+    public Book getBookById(Long id) {
+        return jdbcTemplate.queryForObject("Select * from Books where Book_id = ?", new Object[]{id}, mapper);
+
+    }
+
+    @Override
+    public void admin_addBook(Book book) {
+         jdbcTemplate.update("insert into books(Author_name, Author_surname, Book_name, Year_of_writing, Publisher, Year_of_publishing, " +
+                                "Original_language, Price, Count, Genre)" +
+                "        values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", new Object[]{book.getAuthorName(), book.getAuthorSureName(),
+                            book.getName(), book.getYearOfWriting(), book.getPublisher(), book.getYearOfPublishing(), book.getOriginalLanguage(),
+                            book.getCout(), book.getCount(), book.getGenre()});
+         long index = jdbcTemplate.queryForObject("select max(book_id) from Books", Long.class);
+
+         if (!book.getAuthorSecondName().equals(null)) {
+             jdbcTemplate.update("update Books set Author_secondName=? where book_id=?", new Object[]{book.getAuthorSecondName(), index});
+         }
+
+        if (!book.getDescription().equals(null)) {
+            jdbcTemplate.update("update Books set Description=? where book_id=?", new Object[]{book.getDescription(), index});
+        }
+
+        if (book.getCountOfPages()!=0) {
+            jdbcTemplate.update("update Books set Pages_number=? where book_id=?", new Object[]{book.getCountOfPages(), index});
+        }
+        if (!book.getTranslater().equals(null)) {
+            jdbcTemplate.update("update Books set Translater=? where book_id=?", new Object[]{book.getTranslater(), index});
+        }
+
+        if (!book.getGenre().equals(null)) {
+            jdbcTemplate.update("update Books set Genre=? where book_id=?", new Object[]{book.getGenre(), index});
+        }
+
+
+    }
+
+    @Override
+    public void increaseNumberOfWatchings(Long book_id) {
+        int views = jdbcTemplate.queryForObject("select Number_of_watchings  from Books where Book_id=?", new Object[]{book_id}, Integer.class);
+        jdbcTemplate.update("update Books set Number_of_watchings=? where book_id=?", new Object[]{views+1, book_id});
+    }
+
+    @Override
+    public void updateBook(Book book){
+        jdbcTemplate.update("update Books set Author_Name=?, Author_SecondName=?, Author_SurName=?, Book_Name=?" +
+                "Year_of_writing=?, Publisher=?, Year_of_publishing=?, Translater=?, Pages_number=?, Genre=?, " +
+                "Original_language=?, Language=?, Price=?, Count=?, Description=?, Number_of_watchings=? where Book_id=?",
+                new Object[]{book.getAuthorName(), book.getAuthorSecondName(), book.getAuthorSureName(), book.getName(),
+                book.getYearOfWriting(), book.getPublisher(), book.getYearOfPublishing(), book.getTranslater(), book.getCountOfPages(),
+                book.getGenre(), book.getOriginalLanguage(), book.getLanguage(), book.getCout(), book.getCount(),
+                book.getDescription(), book.getNumberOfWatching(), book.getId()});
+
+    }
 
 }
