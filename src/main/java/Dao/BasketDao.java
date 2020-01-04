@@ -66,13 +66,13 @@ public class BasketDao implements IBasketDao {
 
 
     @Override
-    public void updateCostOfBasket(Long userId, Double newCost) {
-        jdbcTemplate.update("update Baskets set Cost=? where User_id=?", new Object[]{newCost, userId});
+    public void updateCostOfBasket(Long basketId, Double newCost) {
+        jdbcTemplate.update("update Baskets set Cost=? where Basket_id=?", new Object[]{newCost, basketId});
     }
 
     @Override
     public void cleanBasket(Long id) {
-        jdbcTemplate.update("delete Baskets where Basket_id=?", new Object[]{id});
+        jdbcTemplate.update("delete from Baskets where  Basket_id=?", new Object[]{id});
     }
 
     @Override
@@ -88,7 +88,7 @@ public class BasketDao implements IBasketDao {
 
     @Override
     public Basket getBasketByBasketId(Long basketId) {
-        return jdbcTemplate.queryForObject("select * from Basket where Basket_id=? and Date_of_purchase is null", new Object[]{basketId}, mapper);
+        return jdbcTemplate.queryForObject("select * from Baskets where Basket_id=? and Date_of_purchase is null", new Object[]{basketId}, mapper);
 
     }
 }

@@ -11,6 +11,7 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.annotation.security.RolesAllowed;
 import javax.servlet.http.HttpSession;
 import java.util.HashMap;
 import java.util.Map;
@@ -29,13 +30,13 @@ public class UserController {
         myUser=s;
     }
 
-
+/*
     @GetMapping(value="/editUser")
     public String displayEditUser(Model model, HttpSession session) {
         model.addAttribute("user", session.getAttribute("user"));
         return "editUser";
     }
-
+    @RolesAllowed(value={"ROLE_USER", "ROLE_ADMIN"})
     @RequestMapping(value = "/editUser", method = RequestMethod.POST )
     @ResponseBody
     public ModelAndView editUser(HttpSession session, @ModelAttribute User newUser) throws Exception { // returns sessionId
@@ -100,19 +101,19 @@ public class UserController {
         models.put("newArrivals", myBook.getNewArrivals());
         return new ModelAndView("index", "models", models);
     }
-
+    @RolesAllowed(value={"ROLE_ADMIN"})
     @GetMapping(value="addAdmin")
     public String displayAdmin_addAdmin(ModelMap model) {
         User user = new User();
         model.addAttribute("user",user);
         return "register";
     }
-
+    @RolesAllowed(value={"ROLE_ADMIN"})
     @PostMapping(value="addAdmin")
     public String admin_addAdmin(@ModelAttribute User user, Model model) {  //РЕГИСТРАЦИЯ АДМИНА
         model.addAttribute("message", myUser.register(2, user.getName(), user.getFullName(), user.getEmail(), user.getPassword()));
         model.addAttribute("user", new User());
         return displayAdmin_addAdmin(new ModelMap());
-    }
+    }*/
 }
 

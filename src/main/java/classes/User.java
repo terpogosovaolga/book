@@ -82,4 +82,20 @@ public class User {
             e.printStackTrace();
         }
     }
+
+    public boolean equals( User user ){
+        if(this==null){
+            throw new NullPointerException("this object is null");
+        }
+        if(user==null){
+            return false;
+        }
+        if(user==this)
+            return true;
+        return (user.getEmail()==this.getEmail());
+    }
+
+    public String toString() {
+        return this.getId() + ": \n email:" + getEmail() + "\n accessCode:  " + getAccessCode();
+    }
 }

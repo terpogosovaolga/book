@@ -6,7 +6,7 @@ import classes.User;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
-import java.util.Map;
+
 public class UserService implements IUserService {
 
     @Autowired
@@ -44,7 +44,7 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public String register(int accessCode, String email, String name, String fullname, String password) {
+    public Long register(int accessCode, String email, String name, String fullname, String password) {
         return userDao.register(accessCode,  name, fullname, email, password);
     }
 

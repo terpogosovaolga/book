@@ -8,7 +8,7 @@ import java.util.List;
 public interface IUserDao {
 
 
-    User getUserByEmail(String email);
+    abstract User getUserByEmail(String email);
     public User editUser(User user);
     public List<User> getAllUsers();
     public User getUserById(Long id);
@@ -16,7 +16,7 @@ public interface IUserDao {
 
     User login(String email, String password);
 
-    String register(int accessCode, String email, String name, String fullname, String password);
+    Long register(int accessCode, String email, String name, String fullname, String password);
 
     long getLastId();
 

@@ -49,9 +49,9 @@
 %>
 
 <p>Для оплаты введите информацию о своей карте.</p>
-<form:form modelAttribute='card' method='post' commandName='card' pattern='[0-9]{16}' required='true'>
-<form:input path='numberOfCard' type='text' placeholder='Номер карты' pattern='[A-Za-z\s]' required='true'/><br>
-<form:input path='name' type='text' placeholder='Имя владельца карты' pattern='[0-9]{3}' required='true'/><br>
+<form:form modelAttribute='card' method='post' commandName='card' required='true'>
+<form:input path='numberOfCard' type='text' placeholder='Номер карты'  pattern='[0-9]{16}'required='true'/><br>
+<form:input path='name' type='text' placeholder='Имя владельца карты' pattern='[A-Za-z\s]'  pattern='[0-9]{3}' required='true'/><br>
 <form:input path='cvc' type='text' placeholder='CVC-код на обратной стороне' /><br>
 <form:button type='submit'>Купить</form:button>
 </form:form>

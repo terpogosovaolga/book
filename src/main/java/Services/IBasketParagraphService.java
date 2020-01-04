@@ -14,6 +14,7 @@ public interface IBasketParagraphService {
     List<BasketParagraphBooked> getAllBasketParagraphsOfBasket(Long basketId);
 
     void editNumberOfBooks(Long bpId, String plusOrMinus);
+    void editNumberOfBooks(Long bpId, int newNumber);
 
     Double getSumOfBasket(Long id);
 

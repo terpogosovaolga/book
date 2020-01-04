@@ -28,4 +28,6 @@ public interface IBasketParagraphDao {
     List<BasketParagraph> getAllBasketParagraphsWithBook(Long book_id);
 
     void setPrice(Long id, Double cout);
+
+    void editNumberOfBooks(Long bpId, int newNumber);
 }

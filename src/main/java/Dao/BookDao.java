@@ -6,6 +6,8 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 
 import java.util.List;
+import java.util.Map;
+
 public class BookDao implements IBookDao {
 
 
@@ -50,7 +52,34 @@ public class BookDao implements IBookDao {
     @Override
     public List<Book> getNewArrivals() {
 
-        return jdbcTemplate.query("select * from Books order by book_id desc limit 10", mapper);
+        return jdbcTemplate.query("select *  from Books order by book_id desc limit 10", mapper);
+    }
+
+    @Override
+    public List<Book> getPoems() {
+        return jdbcTemplate.query("select * from Books where genre = 'поэзия' limit 10", mapper);
+    }
+
+    @Override
+    public List<Book> getNovels() {
+        return jdbcTemplate.query("select * from books where genre = 'роман' limit 10", mapper);
+    }
+
+    @Override
+    public List<Book> getBooksOfAuthor(String surname) {
+        return jdbcTemplate.query("select * from books where author_surname=? limit 10", new Object[]{surname}, mapper);
+
+    }
+
+    @Override
+    public List<Book> getBooksOfAuthor(String name, String surname){
+        return jdbcTemplate.query("select * from books where author_name=? and author_surname = ? limit 10" , new Object[]{name, surname}, mapper);
+
+    }
+
+    @Override
+    public List<Book> getSmallBooks() {
+        return jdbcTemplate.query("select * from books order by pages_number limit 10", mapper);
     }
 
     @Override
@@ -98,14 +127,77 @@ public class BookDao implements IBookDao {
 
     @Override
     public void updateBook(Book book){
-        jdbcTemplate.update("update Books set Author_Name=?, Author_SecondName=?, Author_SurName=?, Book_Name=?" +
-                "Year_of_writing=?, Publisher=?, Year_of_publishing=?, Translater=?, Pages_number=?, Genre=?, " +
-                "Original_language=?, Language=?, Price=?, Count=?, Description=?, Number_of_watchings=? where Book_id=?",
-                new Object[]{book.getAuthorName(), book.getAuthorSecondName(), book.getAuthorSureName(), book.getName(),
-                book.getYearOfWriting(), book.getPublisher(), book.getYearOfPublishing(), book.getTranslater(), book.getCountOfPages(),
-                book.getGenre(), book.getOriginalLanguage(), book.getLanguage(), book.getCout(), book.getCount(),
-                book.getDescription(), book.getNumberOfWatching(), book.getId()});
+        jdbcTemplate.update("update Books set Author_Name=?, " +
+                        "Author_SecondName=?, " +
+                        "Author_SurName=?, " +
+                        "Book_Name=?," +
+                "Year_of_writing=?, " +
+                        "Publisher=?, " +
+                        "Year_of_publishing=?, " +
+                        "Translater=?, " +
+                        "Pages_number=?, " +
+                        "Genre=?, " +
+                "Original_language=?, " +
+                        "Language=?, " +
+                        "Price=?, " +
+                        "Count=?, " +
+                        "Description=?, " +
+                        "Number_of_watchings=? " +
+                        "where Book_id=?",
+                new Object[]{book.getAuthorName(),
+                        book.getAuthorSecondName(),
+                        book.getAuthorSureName(),
+                        book.getName(),
+                book.getYearOfWriting(),
+                        book.getPublisher(),
+                        book.getYearOfPublishing(),
+                        book.getTranslater(),
+                        book.getCountOfPages(),
+                book.getGenre(),
+                        book.getOriginalLanguage(),
+                        book.getLanguage(),
+                        book.getCout(),
+                        book.getCount(),
+                book.getDescription(),
+                        book.getNumberOfWatching(),
+                        book.getId()});
 
+    }
+
+    @Override
+    public List<Book> search(String key, String value) {
+        String sql = new String();
+
+
+        if (key=="price")
+        {
+            sql = "select * from Books where Price <= " + value;
+            //return jdbcTemplate.query("select * from Books where Price <= ?", new Object[]{value}, mapper);
+        }
+        else if (key == "language" && value == "untranslated"){
+            sql = "select * from Books where language=original_language";
+            //return jdbcTemplate.query("select * from Books where language=original_language", mapper);
+        }
+        else {
+            sql = "select * from Books where " + key  +  " = '" + value + "'";
+        }
+        System.out.println(sql);
+        return jdbcTemplate.query(sql, mapper);
+    }
+
+    @Override
+    public List<Book> search(Map<String, String> map) {
+        String sql = "select * from books where ";
+        int num = 0;
+        for (Map.Entry<String, String> m : map.entrySet())
+        {
+            if (num>0)
+                sql+="and ";
+            num++;
+            sql+=m.getKey() + " = '" + m.getValue() + "'";
+        }
+        System.out.println("query: " + sql);
+        return jdbcTemplate.query(sql, mapper);
     }
 
 }

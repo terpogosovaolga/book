@@ -61,11 +61,10 @@ public class BasketParagraphDao implements IBasketParagraphDao{
                 preNumber+=number;
                 cost = (cost/number)*preNumber;
                 jdbcTemplate.update("update BasketParagraphs set Count=?, Cost=? where Basket_id=? and Book_id=? ) values(?, ?, ?, ?)", new Object[]{preNumber, cost, basketId, bookId});
-
-                 }
+            }
         }
         catch(EmptyResultDataAccessException e) {
-            System.out.println("there is an exception!");
+            System.out.println("creating BP.........");
             jdbcTemplate.update("insert into BasketParagraphs(Basket_id, Book_id, Count, Cost) values(?, ?, ?, ?)", new Object[]{basketId, bookId, number, cost});
         }
         return jdbcTemplate.queryForObject("select * from BasketParagraphs where Basket_id=? and Book_id=?", new Object[]{basketId, bookId}, mapper);
@@ -75,10 +74,14 @@ public class BasketParagraphDao implements IBasketParagraphDao{
     public List<BasketParagraphBooked> getAllBasketParagraphsOfBasket(Long basketId) {
        List<BasketParagraphBooked> bpBooked = new ArrayList<>();
        List<BasketParagraph> bp = jdbcTemplate.query("select * from BasketParagraphs where Basket_id=?", new Object[]{basketId}, mapper);
-       for (BasketParagraph b : bp)
-       {
-           Book book = jdbcTemplate.queryForObject("select * from Books where Book_id=?", new Object[]{b.getBookId()},  bookMapper);
-           bpBooked.add(new BasketParagraphBooked(b, book));
+       try {
+           for (BasketParagraph b : bp) {
+               Book book = jdbcTemplate.queryForObject("select * from Books where Book_id=?", new Object[]{b.getBookId()}, bookMapper);
+               bpBooked.add(new BasketParagraphBooked(b, book));
+           }
+       }
+       catch(EmptyResultDataAccessException e) {
+           return bpBooked;
        }
        return bpBooked;
     }
@@ -156,10 +159,20 @@ public class BasketParagraphDao implements IBasketParagraphDao{
     }
 
     @Override
-    public void setPrice(Long id, Double cout) {
-        int count = jdbcTemplate.queryForObject("select Cost from BasketParagraphs where BasketParagraph_id=?", new Object[]{id}, Integer.class);
+    public void setPrice(Long id, Double newPrice) {
+        //int count = jdbcTemplate.queryForObject("select Count from BasketParagraphs where BasketParagraph_id=?", new Object[]{id}, Integer.class);
 
-        jdbcTemplate.update("update BasketParagraphs set Cost=? where BasketParagraph_id=?", new Object[]{count*cout, id});
+        jdbcTemplate.update("update BasketParagraphs set Cost=? where BasketParagraph_id=?", new Object[]{newPrice, id});
+    }
+
+    @Override
+    public void editNumberOfBooks(Long bpId, int newNumber) {
+        jdbcTemplate.update("update BasketParagraphs set Count=? where BasketParagraph_id=?", new Object[]{newNumber, bpId});
+        BasketParagraph bp = jdbcTemplate.queryForObject("select * from BasketParagraphs where BasketParagraph_id=?", new Object[]{bpId}, mapper);
+        Double price = jdbcTemplate.queryForObject("select Price from Books where Book_id=?", new Object[]{bp.getBookId()}, Double.class);
+
+        setPrice(bpId, price*newNumber);
+
     }
 
 }

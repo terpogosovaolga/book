@@ -3,6 +3,7 @@ package classes;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.web.bind.annotation.ModelAttribute;
 
+import javax.swing.*;
 import java.lang.reflect.Field;
 
 
@@ -103,7 +104,6 @@ public class Book {
         }
     }
 
-    @NotNull
     public Long getId() {
         return id;
     }
@@ -112,7 +112,7 @@ public class Book {
         this.id = id;
     }
 
-    @NotNull
+
     public String getAuthorName() {
         return authorName;
     }
@@ -129,7 +129,6 @@ public class Book {
         this.authorSecondName = authorSecondName;
     }
 
-    @NotNull
     public String getAuthorSureName() {
         return authorSureName;
     }
@@ -138,7 +137,6 @@ public class Book {
         this.authorSureName = authorSureName;
     }
 
-    @NotNull
     public String getName() {
         return name;
     }
@@ -155,7 +153,6 @@ public class Book {
         this.yearOfWriting = yearOfWriting;
     }
 
-    @NotNull
     public String getPublisher() {
         return publisher;
     }
@@ -188,7 +185,6 @@ public class Book {
         this.countOfPages = countOfPages;
     }
 
-    @NotNull
     public String getGenre() {
         return genre;
     }
@@ -197,7 +193,6 @@ public class Book {
         this.genre = genre;
     }
 
-    @NotNull
     public String getOriginalLanguage() {
         return originalLanguage;
     }
@@ -214,7 +209,6 @@ public class Book {
         this.language = language;
     }
 
-    @NotNull
     public Double getCout() {
         return cout;
     }
@@ -223,7 +217,6 @@ public class Book {
         this.cout = cout;
     }
 
-    @NotNull
     public Integer getCount() {
         return count;
     }
@@ -246,5 +239,47 @@ public class Book {
 
     public void setNumberOfWatching(int numberOfWatching) {
         this.numberOfWatching = numberOfWatching;
+    }
+
+    public String universalGet(String key) { // возвращает значение поле, имя которого = key
+        Field field;
+        try {
+            field = User.class.getField(key);
+            field.setAccessible(true);
+            return (String) field.get(this);
+        } catch (NoSuchFieldException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public String getFullNameOfAuthor() {
+       try {
+           if (!authorSecondName.equals(null))
+               return authorSureName + " " + authorName + " " + authorSecondName;
+       }
+        catch(NullPointerException n) {
+            return authorSureName + " " + authorName;
+        }
+       return authorSureName + " " + authorName + " " + authorSecondName;
+    }
+
+    public boolean equals(Book b) {
+        if(this==null){
+            throw new NullPointerException("this object is null");
+        }
+        if(b==null){
+            return false;
+        }
+        if (this == b) return true;
+        if (this.getClass() != b.getClass()) return false;
+        if (!this.getName().equals(b.getName())) return false;
+        if (!this.getAuthorSureName().equals(b.getAuthorSureName())) return false;
+        if (!this.getAuthorSecondName().equals(b.getAuthorSecondName())) return false;
+        if (!this.getPublisher().equals((b.getPublisher()))) return false;
+        return (this.getYearOfPublishing() == b.getYearOfPublishing());
+
     }
 }

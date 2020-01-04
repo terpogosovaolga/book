@@ -39,7 +39,7 @@ public class BasketParagraph {
     public BasketParagraph(Long bookId) { this.bookId = bookId;
     }
 
-    @NotNull
+
     public Long getId() {
         return id;
     }
@@ -48,7 +48,7 @@ public class BasketParagraph {
         this.id = id;
     }
 
-    @NotNull
+
     public Long getBasketId() {
         return basketId;
     }
@@ -57,7 +57,7 @@ public class BasketParagraph {
         this.basketId = basketId;
     }
 
-    @NotNull
+
     public Long getBookId() {
         return bookId;
     }
@@ -75,13 +75,25 @@ public class BasketParagraph {
         this.numberOfBooks = numberOfBooks;
     }
 
-    @NotNull
+
     public Double getSum() {
         return sum;
     }
 
     @ModelAttribute("sum")
-    public void setSum(@NotNull Double sum) {
+    public void setSum( Double sum) {
         this.sum = sum;
+    }
+
+    public boolean equals(BasketParagraph bp) {
+        if(this==null){
+            throw new NullPointerException("this object is null");
+        }
+        if(bp==null){
+            return false;
+        }
+        if(bp==this)
+            return true;
+        return (bp.getBasketId() == getBasketId() && bp.getBookId() == getBookId());
     }
 }

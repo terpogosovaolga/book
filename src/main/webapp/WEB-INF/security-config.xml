@@ -1,0 +1,65 @@
+<?xml version= "1.0" encoding= "UTF-8"?>
+<!--<beans:beans xmlns:beans= "http://www.springframework.org/schema/beans"
+             xmlns:xsi= "http://www.w3.org/2001/XMLSchema-instance"
+             xmlns= "http://www.springframework.org/schema/security"
+             xsi:schemaLocation= "http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/security
+       http://www.springframework.org/schema/security/spring-security.xsd">-->
+    <b:beans xmlns:b="http://www.springframework.org/schema/beans"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xmlns="http://www.springframework.org/schema/security"
+             xsi:schemaLocation="
+        http://www.springframework.org/schema/security
+        http://www.springframework.org/schema/security/spring-security.xsd
+        http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+
+    <!-- auto-config= "true" > Automatically registers a login form, BASIC authentication,
+    logout services. use-expressions Enables EL-expressions in the access attribute -->
+    <http auto-config= "true" use-expressions= "true"  >
+
+        <!--used to define the set of URL patterns that the application is interested in
+        and to configure how they should be handled. It is used to construct the
+        FilterInvocationSecurityMetadataSource used by the FilterSecurityInterceptor-->
+        <intercept-url pattern= "/" access= "hasRole('ADMIN')"/> <!--ANONYMUS-->
+    </http>
+        <!--Если попытаться войти без логина на страницу в этом маппинге (например http://localhost:8080/user/),
+        то будет переброшено на страницу, указанную в form-login login-page='pageName.html' -->
+
+        <authentication-manager>
+            <authentication-provider>
+                <user-service>
+                    <user name="admin" password="admin" authorities="ROLE_ADMIN"/> <!-- Добавляем пользователя который будет иметь права админа -->
+                </user-service>
+            </authentication-provider>
+        </authentication-manager>
+
+
+        <!--
+        Это должно быть внутри http
+        <form-login login-page= "/login.jsp"
+                    username-parameter= "j_username"
+                    password-parameter= "j_password"
+                    login-processing-url= "/login"
+                    authentication-failure-url= "/user.jsp?error=true" />
+
+        <logout logout-url= "/user/logout" logout-success-url= "/"/>
+
+        <remember-me key= "myKey" token-validity-seconds= "300"/>
+
+        <csrf disabled= "true"/>-->
+
+
+  <!--  <jdbc-user-service id= "jdbcUserService" data-source-ref= "dataSource"
+                       users-by-username-query= "SELECT Email, Password, Access_code FROM User WHERE Email=?"
+                       authorities-by-username-query= "SELECT U.Email, A.AUTHORITY
+        	 FROM AUTHORITIES A, USER U WHERE U.Email = A.Email AND U.Email = ? "/>
+
+    <authentication-manager alias= "authenticationManager">
+        <authentication-provider user-service-ref= "jdbcUserService"/>
+    </authentication-manager>-->
+
+
+</b:beans>

@@ -26,7 +26,7 @@
     <a href='/springMVC_war_exploded/user'>Моя страница</a>
     <a href="/springMVC_war_exploded/catalog">Каталог</a>
     <div>
-        <form:form modelAttribute="book" method="post" commandName="book">
+        <form:form modelAttribute="book" method="post" commandName="book" acceptCharset="utf-8">
             <label>Автор</label>
             <br>
             <label>Имя</label><form:input path="authorName" type="text" required="true"/>

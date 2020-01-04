@@ -1,4 +1,6 @@
-<%@ page import="classes.User" %><%--
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ page import="classes.User" %>
+<%--
   Created by IntelliJ IDEA.
   User: Натусик
   Date: 22.10.2019
@@ -14,15 +16,19 @@
     <p>USER</p>
     <a href='/springMVC_war_exploded/'>Главная</a>
     <a href="/springMVC_war_exploded/catalog">Каталог</a>
+    <c:if test= "${not empty param.error}">
+    <font size= "2" color= "red"><b>Неправильный логин или пароль</b></font>
+    </c:if>
+
     <%
 
-            String message= (String) request.getAttribute("message");
+            Long message= (Long) request.getAttribute("message");
 
             try {
                 if (!message.equals(null)) {
                     //**************************ПОСЛЕ РЕГИСТРАЦИИ
                     out.println(message);
-                    if (message == "Пользователь с таким email уже зарегистрирован") {
+                    if (message != null) {
                         out.println("<p>Попробуйте <a href = '/springMVC_war_exploded/user/login'>войти</a> или <a href='/springMVC_war_exploded/user/register'>Зарегистрироваться</a> на другой email  </p>");
                     } else {
                         out.println("<p> Вам осталось только <a  href='/springMVC_war_exploded/user/login'>войти </a>, чтобы пользоваться своей новой учетной записью </p>");

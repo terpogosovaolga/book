@@ -44,6 +44,10 @@ public class BasketParagraphService implements IBasketParagraphService {
         }
     }
 
+    public void editNumberOfBooks(Long bpId, int newNumber){
+        myBp.editNumberOfBooks(bpId, newNumber);
+    }
+
     @Override
     public Double getSumOfBasket(Long id) {
         return myBp.getSumOfBasket(id);
@@ -61,7 +65,7 @@ public class BasketParagraphService implements IBasketParagraphService {
 
     @Override
     public void createBasketParagraph(BasketParagraph bp) {
-        createBasketParagraph(bp.getBookId(), bp.getBasketId(), bp.getNumberOfBooks(), bp.getSum());
+        myBp.createBasketParagraph(bp.getBookId(), bp.getBasketId(), bp.getNumberOfBooks(), bp.getSum());
     }
 
     @Override

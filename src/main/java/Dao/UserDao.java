@@ -29,16 +29,6 @@ public class UserDao implements IUserDao {
 
 
     @Override
-    public User getUserByEmail(String email) {
-        User user = null;
-        try {
-            user = jdbcTemplate.queryForObject("select * from Users where Email = ?", new Object[]{email}, mapper);
-        } catch (DataAccessException dataAccessException) {
-        }
-        return user;
-    }
-
-    @Override
     public User editUser(User user) {
 
         assert jdbcTemplate.update("update  Users values (?, ?, ?, ?, ?, ?) where User_id = ?", new Object[]{user.getId(), user.getAccessCode(), user.getName(), user.getFullName(), user.getEmail(), user.getPassword()})>0;
@@ -79,34 +69,43 @@ public class UserDao implements IUserDao {
     @Override
     public User login(String email, String password) {
         try {
-          User user = jdbcTemplate.queryForObject("select * from Users where Email=?", new Object[]{email}, mapper);
+          User user = getUserByEmail(email);
+          System.out.println("LOGIN: user id: " + user.getId());
           return user;
        }
-       catch (EmptyResultDataAccessException e)
+       catch (NullPointerException e)
        {
            return null;
        }
     }
 
     @Override
-    public String register(int accessCode, String name, String fullname, String email,  String password) {
+    public Long register(int accessCode, String name, String fullname, String email, String password) {
+        User user = getUserByEmail(email);
         try {
-            List<User> user = jdbcTemplate.query("select * from Users where Email=?", new Object[]{email}, mapper);
-            System.out.println("ID OF THIS ENAIL IS ");
-            System.out.println("we have " + user.size() + "mails like that");
-            if (user.size()>0)
-            {
-                System.out.println("we have this email in our base");
-                return "Пользователь с таким email уже зарегистрирован";
+            if (!user.equals(null)) {
+                return Long.MIN_VALUE;
             }
         }
-        catch(EmptyResultDataAccessException e) {
+        catch(NullPointerException e) {
             System.out.println("we have no this email!");
             jdbcTemplate.update("insert into users(Access_code, Name, Surname, Email, Password) values(?, ?, ?, ?, ?)",
                                 new Object[]{accessCode, name, fullname,email, password});
-            return "Поздравляем! Вы зарегистрированы!";
+
+            return getUserByEmail(email).getId();
         }
-        return "Поздравляем! Вы зарегистрированы!";
+        return getUserByEmail(email).getId();
+    }
+
+    @Override
+    public User getUserByEmail(String email) {
+        try {
+            User user = jdbcTemplate.queryForObject("select * from Users where Email=?", new Object[]{email}, mapper);
+            return user;
+        }
+        catch(EmptyResultDataAccessException e) {
+            return null;
+        }
     }
 
     @Override

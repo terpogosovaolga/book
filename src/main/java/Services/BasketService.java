@@ -32,8 +32,8 @@ public class BasketService implements IBasketService {
     }
 
     @Override
-    public void updateCostOfBasket(Long userId, Double newCost) {
-        basketDao.updateCostOfBasket(userId, newCost);
+    public void updateCostOfBasket(Long basketId, Double newCost) {
+        basketDao.updateCostOfBasket(basketId, newCost);
     }
 
     @Override
