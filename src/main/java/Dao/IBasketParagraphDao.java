@@ -1,33 +1,50 @@
 package Dao;
 
-import classes.BasketParagraph;
-import classes.BasketParagraphBooked;
+import models.Basket;
+import models.BasketParagraph;
+import models.Book;
 
 import java.util.List;
 
 public interface IBasketParagraphDao {
-    BasketParagraph createBasketParagraph(Long bookId, Long userId, int number, Double cost);
 
+    List<BasketParagraph> getAllBasketParagraphs();  //returns the list of all basket paragraphs of all baskets         SELECT
 
-    List<BasketParagraphBooked> getAllBasketParagraphsOfBasket(Long basketId);
+    BasketParagraph getBasketParagraphByBasketParagraphId(Long id); //returns the only one basket paragraph by its id   SELECT
 
-    Double getSumOfBasket(Long id);
+    BasketParagraph save(BasketParagraph basketParagraph); //adds a basketParagraph in database. if it's exist, returns it  INSERT
 
-    void deleteBasketParagraphs(Long basketId);
+    void update(BasketParagraph bp);   //updates the data about this basket paragraph in database                       UPDATE
 
-    void deleteBasketParagraph(Long bpId);
+    void delete(BasketParagraph basketParagraph);       // deletes this basket paragraph from database                  DELETE
 
-    BasketParagraph getBasketParagraphByBasketAndBook(Long basketId, Long bookId);
+    List<BasketParagraph> getBasketParagraphsOfBook(Book book);  //returns the list of basketParagraphs with this book  SELECT
 
-    void plusNumberOfBooks(Long bpId);
+    List<BasketParagraph> getBasketParagraphsOfBasket(Basket basket); //returns the list of basketParagraphs of this basket SELECT
 
-    void minusNumberOfBooks(Long bpId);
+    BasketParagraph getBasketParagraphByBasketAndBook(long basketId, long bookId);   //returns the only one basketParagraph in this basket of this book SELECT
 
-    List<BasketParagraphBooked> getAllBasketParagraphsOfOrder(Long id);
+    void updateSum(Double differenceBetweenOldAndNewPrice, BasketParagraph bp); //updates sum of this basketParagraph   UPDATE
 
-    List<BasketParagraph> getAllBasketParagraphsWithBook(Long book_id);
+    void updateNumberOfBooks(int plusNumber, BasketParagraph bp); //increases the number of books on plusNumber         UPDATE
 
-    void setPrice(Long id, Double cout);
+   // List<BasketParagraphBooked> getAllBasketParagraphsOfBasket(Long basketId);
 
-    void editNumberOfBooks(Long bpId, int newNumber);
+    //Double getSumOfBasket(Long id);
+
+   // void deleteBasketParagraphs(Long basketId);
+
+    //BasketParagraph getBasketParagraphByBasketAndBook(Long basketId, Long bookId);
+
+   // void plusNumberOfBooks(Long bpId);
+
+ //   void minusNumberOfBooks(Long bpId);
+
+  //  List<BasketParagraphBooked> getAllBasketParagraphsOfOrder(Long id);
+
+   // List<BasketParagraph> getAllBasketParagraphsWithBook(Long book_id);
+
+   // void setPrice(Long id, Double cout);
+
+    //void editNumberOfBooks(Long bpId, int newNumber);
 }

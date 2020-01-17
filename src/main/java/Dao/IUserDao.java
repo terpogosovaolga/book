@@ -1,24 +1,24 @@
 package Dao;
 
-import classes.User;
+import models.User;
 
 import java.util.List;
 
 
 public interface IUserDao {
 
+    List<User> getAllUsers(); // returns list of all users from database             SELECT
 
-    abstract User getUserByEmail(String email);
-    public User editUser(User user);
-    public List<User> getAllUsers();
-    public User getUserById(Long id);
-    public void addUser(User user);
+    User getUserById(Long id); //returns the only one user with this id              SELECT
 
-    User login(String email, String password);
+    User getUserByUsername(String username); // returns the only one user with this username  SELECT
 
-    Long register(int accessCode, String email, String name, String fullname, String password);
+    void save(User user);  // adds user in database                                  INSERT
 
-    long getLastId();
+    void update(User user);  // updates the data about this user in database         UPDATE
 
-    void deleteUser(Object id);
+    void delete(User user);  // deletes this user from database                      DELETE
+
+   /* User login(String email, String password);
+    Long register(String email, String password);*/
 }

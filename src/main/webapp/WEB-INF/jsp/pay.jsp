@@ -1,7 +1,7 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@ page import="java.util.Map" %>
-<%@ page import="classes.Basket" %>
-<%@ page import="classes.BasketParagraphBooked" %>
+<%@ page import="models.Basket" %>
+<%@ page import="models.BasketParagraphBooked" %>
 <%@ page import="java.util.List" %><%--
   Created by IntelliJ IDEA.
   User: Натусик
@@ -50,8 +50,8 @@
 
 <p>Для оплаты введите информацию о своей карте.</p>
 <form:form modelAttribute='card' method='post' commandName='card' required='true'>
-<form:input path='numberOfCard' type='text' placeholder='Номер карты'  pattern='[0-9]{16}'required='true'/><br>
-<form:input path='name' type='text' placeholder='Имя владельца карты' pattern='[A-Za-z\s]'  pattern='[0-9]{3}' required='true'/><br>
+<form:input path='numberOfCard' type='text' placeholder='Номер карты'  pattern='[0-9]{16}' required='true'/><br>
+<form:input path='name' type='text' placeholder='Имя владельца карты' pattern='[A-Za-z\s]' required='true'/><br>
 <form:input path='cvc' type='text' placeholder='CVC-код на обратной стороне' /><br>
 <form:button type='submit'>Купить</form:button>
 </form:form>

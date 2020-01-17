@@ -1,32 +1,36 @@
 package Services;
 
-import classes.BasketParagraph;
-import classes.BasketParagraphBooked;
+import models.Basket;
+import models.BasketParagraph;
 
 import java.util.List;
 
 public interface IBasketParagraphService {
 
-    public void deleteBasketParagraph(Long bpId);
+    void delete(BasketParagraph basketParagraph);
+    BasketParagraph save(BasketParagraph bp);
+    void update(BasketParagraph bp);
+    List<BasketParagraph> getAllBasketParagraphs();
+    List<BasketParagraph> getAllBasketParagraphsByBasket(Basket basket);
+    BasketParagraph getBasketParagraphByBasketParagraphId(Long id);
+    void editNumberOfBooks(BasketParagraph bp, int newNumber);
+    BasketParagraph getBasketParagraphByBasketAndBook(long basketId, long bookId);
+  //  List<BasketParagraphBooked> getAllBasketParagraphsOfBasket(Long basketId);
 
-    BasketParagraph createBasketParagraph(Long bookId, Long userId, int number, Double cost);
+  //  void editNumberOfBooks(Long bpId, String plusOrMinus);
+   // void editNumberOfBooks(Long bpId, int newNumber);
 
-    List<BasketParagraphBooked> getAllBasketParagraphsOfBasket(Long basketId);
+  //  Double getSumOfBasket(Long id);
 
-    void editNumberOfBooks(Long bpId, String plusOrMinus);
-    void editNumberOfBooks(Long bpId, int newNumber);
+ //   void deleteBasketParagraphs(Long id);
 
-    Double getSumOfBasket(Long id);
+  //  BasketParagraph getBasketParagraphByBasketAndBook(Long basketId, Long bookId);
 
-    void deleteBasketParagraphs(Long id);
+ //   void createBasketParagraph(BasketParagraph basketParagraph);
 
-    BasketParagraph getBasketParagraphByBasketAndBook(Long basketId, Long bookId);
+ //   List<BasketParagraphBooked> getAllBasketParagraphsOfOrders(Long id);
 
-    void createBasketParagraph(BasketParagraph basketParagraph);
+   // List<BasketParagraph> getAllBasketParagraphsWithBook(Long book_id);
 
-    List<BasketParagraphBooked> getAllBasketParagraphsOfOrders(Long id);
-
-    List<BasketParagraph> getAllBasketParagraphsWithBook(Long book_id);
-
-    void setPrice(Long id, Double cout);
+  //  void setPrice(Long id, Double cout);
 }

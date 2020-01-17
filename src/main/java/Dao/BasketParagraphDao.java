@@ -1,50 +1,18 @@
 package Dao;
 
-import classes.Basket;
-import classes.BasketParagraph;
-import classes.BasketParagraphBooked;
-import classes.Book;
-import org.springframework.dao.EmptyResultDataAccessException;
+import Hibernate.HibernateSessionFactory;
+import models.Basket;
+import models.BasketParagraph;
+import models.Book;
+import org.hibernate.Query;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.core.support.JdbcDaoSupport;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
 import java.util.List;
 @Component
 public class BasketParagraphDao implements IBasketParagraphDao{
-
-    RowMapper<BasketParagraph> mapper = (resultSet, rowNum) -> new BasketParagraph(resultSet.getLong("BasketParagraph_id"),
-            resultSet.getLong("Basket_id"),
-            resultSet.getLong("Book_id"),
-            resultSet.getInt("Count"),
-            resultSet.getDouble("Cost"));
-
-    RowMapper<Book> bookMapper = (resultSet, rowNum) -> new Book(resultSet.getLong("Book_id"),
-            resultSet.getString("Author_name"),
-            resultSet.getString("Author_secondname"),
-            resultSet.getString("Author_surname"),
-            resultSet.getString("Book_name"),
-            resultSet.getInt("Year_of_writing"),
-            resultSet.getString("Publisher"),
-            resultSet.getInt("Year_of_publishing"),
-            resultSet.getString("Translater"),
-            resultSet.getInt("Pages_number"),
-            resultSet.getString("Genre"),
-            resultSet.getString("Original_language"),
-            resultSet.getString("Language"),
-            resultSet.getDouble("Price"),
-            resultSet.getInt("Count"),
-            resultSet.getString("Description"),
-            resultSet.getInt("Number_of_watchings"));
-
-    RowMapper<Basket> basketMapper = (resultSet, rowNum) -> new Basket(resultSet.getLong("Basket_id"),
-            resultSet.getLong("User_id"),
-            resultSet.getDouble("Cost"),
-            resultSet.getDate("Date_of_purchase"),
-            resultSet.getBoolean("Delievered"));
-
 
     private final JdbcTemplate jdbcTemplate;
 
@@ -52,7 +20,7 @@ public class BasketParagraphDao implements IBasketParagraphDao{
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    @Override
+  /*  @Override
     public BasketParagraph createBasketParagraph(Long bookId, Long basketId, int number, Double cost) {
         int preNumber;
         try {
@@ -94,11 +62,6 @@ public class BasketParagraphDao implements IBasketParagraphDao{
     @Override
     public void deleteBasketParagraphs(Long basketId) {
         jdbcTemplate.update("delete from BasketParagraphs where Basket_id = ?", new Object[]{basketId});
-    }
-
-    @Override
-    public void deleteBasketParagraph(Long bpId) {
-        jdbcTemplate.update("delete from BasketParagraphs where BasketParagraph_id = ?", new Object[]{bpId});
     }
 
     @Override
@@ -163,16 +126,131 @@ public class BasketParagraphDao implements IBasketParagraphDao{
         //int count = jdbcTemplate.queryForObject("select Count from BasketParagraphs where BasketParagraph_id=?", new Object[]{id}, Integer.class);
 
         jdbcTemplate.update("update BasketParagraphs set Cost=? where BasketParagraph_id=?", new Object[]{newPrice, id});
+    }*/
+
+    @Override
+    public List<BasketParagraph> getAllBasketParagraphs() {
+        List<BasketParagraph> bps = (List<BasketParagraph>) HibernateSessionFactory.getSessionFactory().openSession().createQuery("From BasketParagraphs").list();
+        return bps;
     }
 
     @Override
-    public void editNumberOfBooks(Long bpId, int newNumber) {
-        jdbcTemplate.update("update BasketParagraphs set Count=? where BasketParagraph_id=?", new Object[]{newNumber, bpId});
-        BasketParagraph bp = jdbcTemplate.queryForObject("select * from BasketParagraphs where BasketParagraph_id=?", new Object[]{bpId}, mapper);
-        Double price = jdbcTemplate.queryForObject("select Price from Books where Book_id=?", new Object[]{bp.getBookId()}, Double.class);
-
-        setPrice(bpId, price*newNumber);
-
+    public void delete(BasketParagraph basketParagraph) {
+        Session session = HibernateSessionFactory.getSessionFactory().openSession();
+        Transaction tx1 = session.beginTransaction();
+        session.delete(basketParagraph);
+        tx1.commit();
+        Transaction tx2 = session.beginTransaction();
+        Query query = session.createQuery("update Basket set sum = sum - :oldSum where id = :basketId");
+        query.setParameter("oldSum", basketParagraph.getSum());
+        query.setParameter("basketId", basketParagraph.getBasketId());
+        tx2.commit();
+        session.close();
     }
 
+    @Override
+    public List<BasketParagraph> getBasketParagraphsOfBook(Book book) {
+        Session session = HibernateSessionFactory.getSessionFactory().openSession();
+        Transaction tx1 = session.beginTransaction();
+        Query query = session.createQuery("from BasketParagraph where bookId = :bookId");
+        query.setParameter("bookId", book.getId());
+        List<BasketParagraph> result = query.list();
+        tx1.commit();
+        session.close();
+        return result;
+    }
+
+    @Override
+    public List<BasketParagraph> getBasketParagraphsOfBasket(Basket basket) {
+        Session session = HibernateSessionFactory.getSessionFactory().openSession();
+        Transaction tx1 = session.beginTransaction();
+        Query query = session.createQuery("from BasketParagraph where basketId = :basketId");
+        query.setParameter("basketId", basket.getId());
+        List<BasketParagraph> result = query.list();
+        tx1.commit();
+        session.close();
+        return result;
+    }
+
+    @Override
+    public BasketParagraph getBasketParagraphByBasketAndBook(long basketId, long bookId) {
+        Session session = HibernateSessionFactory.getSessionFactory().openSession();
+        Transaction tx1 = session.beginTransaction();
+        Query query = session.createQuery("from BasketParagraph where basketId = :basketId and bookId= :bookId");
+        query.setParameter("basketId", basketId);
+        query.setParameter("bookId", bookId);
+        BasketParagraph bp = (BasketParagraph) query.uniqueResult();
+        tx1.commit();
+        session.close();
+        return bp;
+    }
+
+    @Override
+    public void updateSum(Double differenceBetweenOldAndNewPrice, BasketParagraph bp) {
+        Session session = HibernateSessionFactory.getSessionFactory().openSession();
+        Transaction tx1 = session.beginTransaction();
+        Query query = session.createQuery("update BasketParagraph set sum =: newSum where id= :basketParagraphId");
+        query.setParameter("newSum", bp.getSum() + differenceBetweenOldAndNewPrice * bp.getNumberOfBooks());
+        query.setParameter("basketParagraphId", bp.getId());
+        query.executeUpdate();
+        tx1.commit();
+        Transaction tx2 = session.beginTransaction();
+        Query queryForBasket = session.createQuery("update Basket set sum = sum + :newSum  where id = :basketId");
+        queryForBasket.setParameter("basketId", bp.getBasketId());
+        queryForBasket.setParameter("newSum",  differenceBetweenOldAndNewPrice * bp.getNumberOfBooks());
+        tx2.commit();
+        session.close();
+    }
+
+    @Override
+    public void updateNumberOfBooks(int plusNumber, BasketParagraph bp) {
+        Session session = HibernateSessionFactory.getSessionFactory().openSession();
+        Transaction tx = session.beginTransaction();
+        Query priceQuery = session.createQuery("from Book where id = :bookId");
+        priceQuery.setParameter("bookId", bp.getBookId());
+        Book book = (Book) priceQuery.uniqueResult();
+        Query query = session.createQuery("update BasketParagraph set numberOfBooks = numberOfBooks + :plusNumber, sum = sum + :newSum where id = :bpId");
+        query.setParameter("plusNumber", plusNumber);
+        query.setParameter("newSum", plusNumber*book.getCout());
+        query.setParameter("bpId", bp.getId());
+        query.executeUpdate();
+        tx.commit();
+
+        session.close();
+    }
+
+    @Override
+    public BasketParagraph save(BasketParagraph basketParagraph) {
+        Session session = HibernateSessionFactory.getSessionFactory().openSession();
+        Transaction tx1 = session.beginTransaction();
+        Query checkQuery = session.createQuery("from BasketParagraph where basketId= :basketId and bookId= :bookId");
+        checkQuery.setParameter("basketId", basketParagraph.getBasketId());
+        checkQuery.setParameter("bookId", basketParagraph.getBookId());
+        if (checkQuery.uniqueResult() == null)
+        {
+            session.save(basketParagraph);
+            tx1.commit();
+            session.close();
+            return null;
+        }
+        else
+        {
+            updateNumberOfBooks(1, basketParagraph);
+            return basketParagraph;
+        }
+    }
+
+    @Override
+    public BasketParagraph getBasketParagraphByBasketParagraphId(Long id) {
+        return  HibernateSessionFactory.getSessionFactory().openSession().get(BasketParagraph.class, id);
+    }
+
+    @Override
+    public void update(BasketParagraph bp) {
+        Session session = HibernateSessionFactory.getSessionFactory().openSession();
+        Transaction tx1 = session.beginTransaction();
+        session.update(bp);
+        tx1.commit();
+        session.close();
+    }
 }

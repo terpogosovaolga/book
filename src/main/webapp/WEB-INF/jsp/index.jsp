@@ -1,328 +1,306 @@
-<%@ page import="classes.Book" %>
+<%@ page import="models.Book" %>
 <%@ page import="java.util.List" %>
 <%@ page import="java.util.Map" %>
-<%@ page import="classes.User" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%request.setCharacterEncoding("UTF-8");%>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="security" uri="http://www.springframework.org/security/tags" %>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
+<!DOCTYPE html>
 <html>
     <head>
+        <c:set var="contextPath" value="${pageContext.request.contextPath}"/>
         <title>Книжный Магазин - Главная</title>
         <meta charset="utf-8">
-        <link href="https://fonts.googleapis.com/css?family=Comfortaa|Cormorant+Unicase|Montserrat|Montserrat+Alternates|Open+Sans+Condensed:300|Playfair+Display+SC|Poiret+One&display=swap" rel="stylesheet">
-        <style>
-            body {
-                background-color: #e9e8fa;
-            }
+        <link href="img/favicon.ico" rel="shortcut icon"/>
+        <link href="https://fonts.googleapis.com/css?family=Josefin+Sans:300,300i,400,400i,700,700i" rel="stylesheet">
+        <!-- Stylesheets -->
+        <style><%@include file="/css/bootstrap.min.css"%></style>
+        <style><%@include file="/css/font-awesome.min.css"%></style>
+        <style><%@include file="/css/flaticon.css"%></style>
+        <style><%@include file="/css/slicknav.min.css"%></style>
+        <style><%@include file="/css/jquery-ui.min.css"%></style>
+        <style><%@include file="/css/owl.carousel.min.css"%></style>
+        <style><%@include file="/css/animate.css"%></style>
+        <style><%@include file="/css/style.css"%></style>
 
-            p:hover {
-                text-decoration: underline;
-            }
-            .memberOfMenu {
-                display: inline-block;
-                width: 24%;
-                color: black;
-                font-size: 20px;
-                font-family: 'Montserrat', sans-serif;
-                align: center;
-                margin-top: 10px;
-                margin-bottom: 10px;
-                height: 100%;
-                text-align: center;
-
-            }
-            .memberOfMenu:hover {
-                background: #1b1899;
-                text-decoration: underline;
-            }
-            #this {
-                background-color: #1b1899; !important;
-            }
-            #this:hover {
-                background-color: #1a012e;
-            }
-            .menu {
-                background-color: #615fd4;
-                height: 100px;
-                width: 100%;
-                display: flex;
-                justify-content: space-between;
-            }
-            .memberOfMenu a {
-                color: white;
-                text-decoration: none;
-                align: center;
-                font-family: 'Montserrat', sans-serif;
-            }
-
-
-
-            .select {
-                display: inline-block;
-                background-color: white;
-                border: 2px solid #4845ff;
-                border-radius: 10px;
-                width: 40%;
-                margin: 20px;
-
-            }
-            .select:hover{
-                background-color: #fcbbf6;
-                text-display: underline;
-            }
-            .select_header {
-                font-size: 25px;
-                margin-left: 10px;
-                font-family: 'Cormorant Unicase', serif;
-            }
-            .select_generalInner {
-                display: none;
-            }
-
-            .booksAuthor {
-                font-size: 20px;
-                color: black;
-                font-family: 'Open Sans Condensed', sans-serif;
-            }
-
-            .bookName {
-                font-size: 25px;
-                color: #1a012e;
-                font-family: 'Playfair Display SC', serif;
-            }
-
-            .select_innerDiv {
-                background-color: #fcbbf6;
-                margin: 10px;
-                padding: 10px;
-                border: #4845ff;
-                border-radius: 5px;
-            }
-            .select_innerDiv:hover {
-                background-color: indianred;
-            }
-            .select_innerDiv a {
-                diplay: inline-block;
-                color: #1a012e;
-                text-decoration: none;
-                align: center;
-            }
-            .select_innerDiv a:hover {
-                color: black;
-            }
-
-            .select_button {
-                background: #4845ff;
-                padding: 7px;
-                border-radius: 3px;
-            }
-            .select_button:hover {
-                background-color: #1b1899;
-            }
-
-        </style>
+        <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+        <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     </head>
     <body>
-        <security:authorize access= "hasAnyRole('ROLE_ADMIN','ROLE_SUPER_USER', 'ROLE_USER')" var= "isUSer"/>
-        <ul class='menu'>
-            <li class='memberOfMenu' id="this"><a href="/springMVC_war_exploded">Главная</a></li>
-            <li class='memberOfMenu'><a href="/springMVC_war_exploded/catalog">Каталог</a></li>
-            <li class='memberOfMenu'><a href="/springMVC_war_exploded/basket/get">Корзина</a></li>
-            <li class='memberOfMenu'><a href='/springMVC_war_exploded/basket/orders'>Мои заказы</a><li>
-            <c:if test= "${not isUSer}">
-                <c:if test= "${empty param.error}">
-                    <li class='memberOfMenu'><a href='/springMVC_war_exploded/user/login'>Войти</a></li>
-                    <li class='memberOfMenu'><a href='/springMVC_war_exploded/user/register'>Зарегистрироваться</a></li>
-                </c:if>
-            <security:authorize access = "hasAnyRole('ROLE_ADMIN')">
-                <li class='memberOfMenu'><a href='/springMVC_war_exploded/admin/addBook'>ДОБАВИТЬ КНИГУ</a></li>
-                <li class='memberOfMenu'><a href='/springMVC_war_exploded/user/addAdmin'>ДОБАВИТЬ АДМИНИСТРАТОРА</a></li>
-            </security:authorize>
-            <c:if test= "${isUSer}">
-                    <li class='memberOfMenu'><a href='/springMVC_war_exploded/user'>Моя страница</a></li>
-                <li class='memberOfMenu'><a href= "<c:url value= "/user/logout"/>">Выйти</a></li>
-            </c:if>
-
-
-           <%/*
-                User user = (User) session.getAttribute("user");
-                try {
-                    if (!user.equals(null)) {
-                        if (user.getAccessCode()==2) // ЕСЛИ ЭТО АДМИН
-                        {
-                            out.println("<li class='memberOfMenu'><a href='/springMVC_war_exploded/admin/addBook'>ДОБАВИТЬ КНИГУ</a></li>");
-                            out.println("<li class='memberOfMenu'><a href='/springMVC_war_exploded/user/addAdmin'>ДОБАВИТЬ АДМИНИСТРАТОРА</a></li>");
-                        }
-                        out.println("<li class='memberOfMenu'><a href='/springMVC_war_exploded/user/logout'>Выйти</a></li>");
-                        out.println("<li class='memberOfMenu'><a href='/springMVC_war_exploded/user'>Моя страница</a></li>");
-
-                    }
-                }
-                catch(NullPointerException np)
-                {
-                    User anon = (User) session.getAttribute("anonId");
-                    out.println("<li class='memberOfMenu'><a href='/springMVC_war_exploded/user/login'>Войти</a></li>");
-                    out.println("<li class='memberOfMenu'><a href='/springMVC_war_exploded/user/register'>Зарегистрироваться</a></li>");
-                }
-           */ %>
-
-
-
-        </ul>
-        <div class="select">
-            <p class="select_header"  id="popular"  onclick="openSelection('popular_div')">Подборка самых популярных книг
-            </p>
-            <div class="select_generalInner" id="popular_div">
-            <%
-            Map<String,Object> models = (Map<String, Object>) request.getAttribute("models");
-            List<Book> popBooks= (List<Book>) models.get("popularBooks");
-            if(popBooks.size()!=0)
-            {
-                for (Book b : popBooks) {
-                    out.println("<a href='/springMVC_war_exploded/book/"+b.getId() + "'><div class='select_innerDiv' >");
-                    out.println("<p class='booksAuthor'>"+b.getFullNameOfAuthor()+"</p>");
-                    out.println("<p class='bookName'> " + b.getName() + "</p>");
-                    out.println("</a>");
-                    out.println("<security:authorize access = 'hasAnyRole('ROLE_ADMIN')'>");
-                        out.println("<a href='/springMVC_war_exploded/admin/editBook/"+b.getId()+"'>Изменить книгу</a>");
-                    out.println("</security:authorize>");
-                    out.println("</div>");
-                }
-            }
-
-        %>
+        <security:authorize access="hasAnyRole('ROLE_ADMIN','ROLE_SUPER_USER', 'ROLE_USER')" var= "isUSer"/>
+        <header class="header-section">
+            <div class="header-top">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-lg-2 text-center text-lg-left">
+                            <a href="<c:url value=''/>" class="site-logo">
+                                <img src="C:\Users\olyao\IdeaProjects\logo.png" alt="">
+                            </a>
+                        </div>
+                        <div class="col-xl-6 col-lg-5">
+                            <form class="header-search-form">
+                                <input type="text" placeholder="Поиск в Книжном магазине...">
+                                <button><i class="flaticon-search"></i></button>
+                            </form>
+                        </div>
+                        <div class="col-xl-4 col-lg-5">
+                            <div class="user-panel">
+                                <div class="up-item">
+                                    <i class="flaticon-profile"></i>
+                                    <c:if test="${not isUSer}">
+                                        <a href="<c:url value='/user/login'/>">Войти</a> или <a href="#">Зарегистрироваться</a>
+                                    </c:if>
+                                    <c:if test="${isUSer}">
+                                        <a href="<c:url value='/logout'/>">Выйти</a>
+                                    </c:if>
+                                </div>
+                                <div class="up-item">
+                                    <div class="shopping-card">
+                                        <i class="flaticon-bag"></i>
+                                        <span>0</span>
+                                    </div>
+                                    <a href="<c:url value='/basket'/>">Корзина</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-        </div>
-        <div class='select'>
-            <p class="select_header" id="newBooks"  onclick="openSelection('new_div')">Новое поступление
-            </p>
-            <div class="select_generalInner" id="new_div">
-            <%
-            List<Book> newBooks= (List<Book>) models.get("newArrivals");
-            if(newBooks.size()!=0)
-            {
-                for (Book b : popBooks) {
-                    out.println("<a href='/springMVC_war_exploded/book/"+b.getId() + "'><div class='select_innerDiv' >");
-                    out.println("<p class='booksAuthor'>"+b.getFullNameOfAuthor()+"</p>");
-                    out.println("<p class='bookName'> " + b.getName() + "</p>");
-                    out.println("</a>");
-                    out.println("<security:authorize access = 'hasAnyRole('ROLE_ADMIN')'>");
-                    out.println("<a href='/springMVC_war_exploded/admin/editBook/"+b.getId()+"'>Изменить книгу</a>");
-                    out.println("</security:authorize>");
-                    out.println("</div>");
-                }
-            }
-        %>
-            </div>
-        </div>
+            <nav class="main-navbar">
+                <div class="container">
+                    <ul class="main-menu">
+                        <li><a href="<c:url value=''/>">Главная</a></li>
+                        <li><a href="<c:url value='//catalog'/>">Каталог</a></li>
+                        <c:if test="${isUSer}">
+                            <li><a href="<c:url value='//user'/>">Моя страница</a></li>
+                        </c:if>
+                        <li><a href="<c:url value='/basket/orders'/>">Мои заказы</a></li>
+                    </ul>
+                </div>
+            </nav>
+        </header>
+        <!--<section class="hero-section">
+             <div class="hero-slider owl-carousel">
+                 <div class="hs-item set-bg" data-setbg="C:\Users\olyao\IdeaProjects\myata.jpg">
+                      <div class="container">
+                            <div class="row">
+                                <div class="col-xl-6 col-lg-7 text-white">
+                                    <span>Новинка</span>
+                                    <h2>Мятная сказка</h2>
+                                    <p>Бестселлер российской современной литературы</p>
+                                    <a href="#" class="site-btn sb-line">Просмотр</a>
+                                    <a href="#" class="site-btn sb-white">Добавить в корзину</a>
+                                </div>
+                            </div>
+                            <div class="offer-card text-white">
+                                <span>всего</span>
+                                <h2>490Р</h2>
+                                <p>КУПИТЬ СЕЙЧАС</p>
+                            </div>
+                       </div>
+                 </div>
+                 <div class="hs-item set-bg" data-setbg="C:\Users\olyao\IdeaProjects\running.jpg">
+                       <div class="container">
+                            <div class="row">
+                                 <div class="col-xl-6 col-lg-7 text-white">
+                                     <span>Новинка</span>
+                                     <h2>Бегущий за ветром</h2>
+                                     <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Quis ipsum sus-pendisse ultrices gravida. Risus commodo viverra maecenas accumsan lacus vel facilisis. </p>
+                                     <a href="#" class="site-btn sb-line">Просмотр</a>
+                                     <a href="#" class="site-btn sb-white">Добавить в корзину</a>
+                                 </div>
+                            </div>
+                            <div class="offer-card text-white">
+                                <span>всего</span>
+                                <h2>490Р</h2>
+                                <p>КУПИТЬ СЕЙЧАС</p>
+                            </div>
+                       </div>
+                 </div>
+             </div>
+             <div class="container">
+                 <div class="slide-num-holder" id="snh-1"></div>
+             </div>
+         </section>-->
+         <section class="top-letest-product-section">
+                            <div class="container">
+                                <div class="section-title">
+                                    <h2>САМЫЕ ПОПУЛЯРНЫЕ КНИГИ</h2>
+                                </div>
+                                <div class="product-slider owl-carousel">
+                                <%Map<String,Object> models = (Map<String, Object>) request.getAttribute("models");
+                                    List<Book> popBooks= (List<Book>) models.get("popularBooks");
+                                    if(popBooks.size()!=0) {
+                                        for (Book b : popBooks)
+                                        {
+                                        out.println("<div class='product-item'>");
+                                            out.println("<div class='pi-pic'>\n" +
+                                                "<span>" + b.getFullNameOfAuthor() + "</span>\n" +
+                                                "<h2>" + b.getName() + "</h2>\n" +
+                                                "<p>" +b.getDescription()+ "</p>\n"+
+                                            "</div>\n" +
+                                            "<div class='pi-links'>\n" +
+                                                "<a href='<c:url value='basket/add/"+b.getId()+"'/>' class='add-card'><i class='flaticon-bag'></i><span>Добавить в корзину</span></a>\n" +
+                                                "<a href='<c:url value='basket/add/"+b.getId()+"'/>' class='wishlist-btn'><i class='flaticon-heart'></i></a>\n" +
+                                            "</div>\n" +
+                                            "<div class='pi-text'>\n" +
+                                                "<h6>"+b.getCout()+"</h6>\n" +
+                                            "</div>\n"+
+                                        "</div>\n");
+                                        }
+                                    }%>
+                                 </div>
+                            </div>
+         </section>
+         <section class="top-letest-product-section">
+                            <div class="container">
+                            <div class="section-title">
+                            <h2>НОВОЕ ПОСТУПЛЕНИЕ</h2>
+                            </div>
+                            <div class="product-slider owl-carousel">
+                            <%
+                                List<Book> newArrivals = (List<Book>) models.get("newArrivals");
 
-        <div class="select">
-            <p class="select_header"  id="poems"  onclick="openSelection('poems_div')">Полет рифмы: лучшие стихи и поэмы
-            </p>
-            <div class="select_generalInner" id="poems_div">
-                <%
-                    List<Book> poems_books = (List<Book>) models.get("poems");
-                    if(popBooks.size()!=0)
-                    {
-                        for (Book b : poems_books) {
-                            out.println("<a href='/springMVC_war_exploded/book/"+b.getId() + "'><div class='select_innerDiv' >");
-                            out.println("<p class='booksAuthor'>"+b.getFullNameOfAuthor()+"</p>");
-                            out.println("<p class='bookName'> " + b.getName() + "</p>");
-                            out.println("</a>");
-                            out.println("<security:authorize access = 'hasAnyRole('ROLE_ADMIN')'>");
-                            out.println("<a href='/springMVC_war_exploded/admin/editBook/"+b.getId()+"'>Изменить книгу</a>");
-                            out.println("</security:authorize>");
-                            out.println("</div>");
-                        }
-                    }
+                                if(newArrivals.size()!=0) {
+                                    for (Book b : newArrivals)
+                                    {
 
-                %>
-            </div>
-        </div>
+                                        out.println("<div class='product-item'>");
+                                        out.println("<div class='pi-pic'>\n" +
+                                                "<span>" + b.getFullNameOfAuthor() + "</span>\n" +
+                                                "<h2>" + b.getName() + "</h2>\n" +
+                                                "<p>" +b.getDescription()+ "</p>\n"+
+                                                "</div>\n" +
+                                                "<div class='pi-links'>\n" +
+                                                "<a href='<c:url value='basket/add/"+b.getId()+"'/>' class='add-card'><i class='flaticon-bag'></i><span>Добавить в корзину</span></a>\n" +
+                                                "<a href='<c:url value='basket/add/"+b.getId()+"'/>' class='wishlist-btn'><i class='flaticon-heart'></i></a>\n" +
+                                                "</div>\n" +
+                                                "<div class='pi-text'>\n" +
+                                                "<h6>"+b.getCout()+"</h6>\n" +
+                                                "</div>\n"+
+                                                "</div>\n");
+                                    }
+                                }%>
+                            </div></div></section>
+                            <section class="top-letest-product-section">
+                            <div class="container">
+                            <div class="section-title">
+                                <h2>ЛУЧШИЕ ШЕДЕВРЫ ПОЭЗИИ</h2>
+                            </div>
+                            <div class="product-slider owl-carousel">
+                            <%
+                                List<Book> poems = (List<Book>) models.get("poems");
 
-        <div class="select">
-            <p class="select_header"  id="novels"  onclick="openSelection('novels_div')">Слезы и драма: Романы всех времен
-            </p>
-            <div class="select_generalInner" id="novels_div">
-                <%
-                    List<Book> novels_books = (List<Book>) models.get("novels");
-                    if(popBooks.size()!=0)
-                    {
-                        for (Book b : novels_books) {
-                            out.println("<a href='/springMVC_war_exploded/book/"+b.getId() + "'><div class='select_innerDiv' >");
-                            out.println("<p class='booksAuthor'>"+b.getFullNameOfAuthor()+"</p>");
-                            out.println("<p class='bookName'> " + b.getName() + "</p>");
-                            out.println("</a>");
-                            out.println("<security:authorize access = 'hasAnyRole('ROLE_ADMIN')'>");
-                            out.println("<a href='/springMVC_war_exploded/admin/editBook/"+b.getId()+"'>Изменить книгу</a>");
-                            out.println("</security:authorize>");
-                            out.println("</div>");
-                        }
-                    }
+                                if(poems.size()!=0) {
+                                    for (Book b : poems)
+                                    {
 
-                %>
-            </div>
-        </div>
-        <div class="select">
-            <p class="select_header"  id="small"  onclick="openSelection('small_div')">Самые маленькие книги
-            </p>
-            <div class="select_generalInner" id="small_div">
-                <%
-                    List<Book> small_books = (List<Book>) models.get("small");
-                    if(popBooks.size()!=0)
-                    {
-                        for (Book b : popBooks) {
-                            out.println("<a href='/springMVC_war_exploded/book/"+b.getId() + "'><div class='select_innerDiv' >");
-                            out.println("<p class='booksAuthor'>"+b.getFullNameOfAuthor()+"</p>");
-                            out.println("<p class='bookName'> " + b.getName() + "</p>");
-                            out.println("</a>");
-                            out.println("<security:authorize access = 'hasAnyRole('ROLE_ADMIN')'>");
-                            out.println("<a href='/springMVC_war_exploded/admin/editBook/"+b.getId()+"'>Изменить книгу</a>");
-                            out.println("</security:authorize>");
-                            out.println("</div>");
-                        }
-                    }
+                                        out.println("<div class='product-item'>");
+                                        out.println("<div class='pi-pic'>\n" +
+                                                "<span>" + b.getFullNameOfAuthor() + "</span>\n" +
+                                                "<h2>" + b.getName() + "</h2>\n" +
+                                                "<p>" +b.getDescription()+ "</p>\n"+
+                                                "</div>\n" +
+                                                "<div class='pi-links'>\n" +
+                                                "<a href='<c:url value='basket/add/"+b.getId()+"'/>' class='add-card'><i class='flaticon-bag'></i><span>Добавить в корзину</span></a>\n" +
+                                                "<a href='<c:url value='basket/add/"+b.getId()+"'/>' class='wishlist-btn'><i class='flaticon-heart'></i></a>\n" +
+                                                "</div>\n" +
+                                                "<div class='pi-text'>\n" +
+                                                "<h6>"+b.getCout()+"</h6>\n" +
+                                                "</div>\n"+
+                                                "</div>\n");
+                                    }
+                                }%>
+                            </div></div></section>
+                            <section class="top-letest-product-section">
+                            <div class="container">
+                            <div class="section-title">
+                            <h2>ЛУЧШИЕ РОМАНЫ</h2>
+                            </div>
+                            <div class="product-slider owl-carousel">
+                            <%
+                                List<Book> novels = (List<Book>) models.get("novels");
 
-                %>
-            </div>
-        </div>
+                                if(novels.size()!=0) {
+                                    for (Book b : novels)
+                                    {
+                                        out.println("<div class='product-item'>");
+                                        out.println("<div class='pi-pic'>\n" +
+                                                "<span>" + b.getFullNameOfAuthor() + "</span>\n" +
+                                                "<h2>" + b.getName() + "</h2>\n" +
+                                                "<p>" +b.getDescription()+ "</p>\n"+
+                                                "</div>\n" +
+                                                "<div class='pi-links'>\n" +
+                                                "<a href='<c:url value='basket/add/"+b.getId()+"'/>' class='add-card'><i class='flaticon-bag'></i><span>Добавить в корзину</span></a>\n" +
+                                                "<a href='<c:url value='basket/add/"+b.getId()+"'/>' class='wishlist-btn'><i class='flaticon-heart'></i></a>\n" +
+                                                "</div>\n" +
+                                                "<div class='pi-text'>\n" +
+                                                "<h6>"+b.getCout()+"</h6>\n" +
+                                                "</div>\n"+
+                                                "</div>\n");
+                                    }
+                                }%>
+                            </div></div></section>
+                            <section class="top-letest-product-section">
+                            <div class="container">
+                            <div class="section-title">
+                            <h2>МЕНЬШЕ 200 СТРАНИЦ</h2>
+                            </div>
+                            <div class="product-slider owl-carousel">
+                            <%
+                                List<Book> smalls = (List<Book>) models.get("small");
+                                if(smalls.size()!=0) {
+                                    for (Book b : smalls)
+                                    {
 
-        <div class="select">
-            <p class="select_header"  id="tolstoy"  onclick="openSelection('tolstoy_div')">Лев Толстой: золотые произведения
-            </p>
-            <div class="select_generalInner" id="tolstoy_div">
-                <%
-                    List<Book> tolstoy_books = (List<Book>) models.get("tolstoy");
-                    if(popBooks.size()!=0)
-                    {
-                        for (Book b : tolstoy_books) {
-                            out.println("<a href='/springMVC_war_exploded/book/"+b.getId() + "'><div class='select_innerDiv' >");
-                            out.println("<p class='booksAuthor'>"+b.getFullNameOfAuthor()+"</p>");
-                            out.println("<p class='bookName'> " + b.getName() + "</p>");
-                            out.println("<p>" + b.getNumberOfWatching() + " просмотров!</p>");
-                            out.println("</a>");
-                            out.println("<security:authorize access = 'hasAnyRole('ROLE_ADMIN')'>");
-                            out.println("<a href='/springMVC_war_exploded/admin/editBook/"+b.getId()+"'>Изменить книгу</a>");
-                            out.println("</security:authorize>");
-                            out.println("</div>");
-                        }
-                    }
+                                        out.println("<div class='product-item'");
+                                        out.println("<div class='pi-pic'>\n" +
+                                                "<span>" + b.getFullNameOfAuthor() + "</span>\n" +
+                                                "<h2>" + b.getName() + "</h2>\n" +
+                                                "<p>" +b.getDescription()+ "</p>\n"+
+                                                "</div>\n" +
+                                                "<div class='pi-links'>\n" +
+                                                "<a href='<c:url value='basket/add/"+b.getId()+"'/>' class='add-card'><i class='flaticon-bag'></i><span>Добавить в корзину</span></a>\n" +
+                                                "<a href='<c:url value='basket/add/"+b.getId()+"'/>' class='wishlist-btn'><i class='flaticon-heart'></i></a>\n" +
+                                                "</div>\n" +
+                                                "<div class='pi-text'>\n" +
+                                                "<h6>"+b.getCout()+"</h6>\n" +
+                                                "</div>\n"+
+                                                "</div>\n");
+                                    }
+                                }%>
+                            </div></div></section>
+                            <section class="top-letest-product-section">
+                            <div class="container">
+                            <div class="section-title">
+                            <h2>ЛУЧШИЕ ПРОИЗВЕДЕНИЯ ЛЬВА ТОЛСТОГО</h2>
+                            </div>
+                            <div class="product-slider owl-carousel">
+                            <%
+                                List<Book> tolstoy = (List<Book>) models.get("tolstoy");
 
-                %>
-            </div>
-        </div>
-    <script type="text/javascript">
-        function openSelection(string) {
-            var div = document.getElementById(string);
-            if (div.style.display == "none") {
-                div.style.display = 'block';
-            }
-            else {
-                div.style.display = "none";
-            }
-        };
-    </script>
-    </body>
+                                if(tolstoy.size()!=0) {
+                                    for (Book b : tolstoy)
+                                    {
+
+                                        out.println("<div class='product-item' onclick='click_book("+b.getId()+")'>");
+                                        out.println("<div class='pi-pic'>\n" +
+                                                "<span>" + b.getFullNameOfAuthor() + "</span>\n" +
+                                                "<h2>" + b.getName() + "</h2>\n" +
+                                                "<p>" +b.getDescription()+ "</p>\n"+
+                                                "</div>\n" +
+                                                "<div class='pi-links'>\n" +
+                                                "<a href='<c:url value='basket/add/"+b.getId()+"'/>' class='add-card'><i class='flaticon-bag'></i><span>Добавить в корзину</span></a>\n" +
+                                                "<a href='<c:url value='basket/add/"+b.getId()+"'/>' class='wishlist-btn'><i class='flaticon-heart'></i></a>\n" +
+                                                "</div>\n" +
+                                                "<div class='pi-text'>\n" +
+                                                "<h6>"+b.getCout()+"</h6>\n" +
+                                                "</div>\n"+
+                                                "</div>\n");
+                                    }
+                                }%>
+                            </div></div></section>
+</body>
 </html>

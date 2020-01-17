@@ -1,31 +1,26 @@
 package Services;
 
+import Dao.IBasketDao;
 import Dao.IBasketParagraphDao;
-import classes.BasketParagraph;
-import classes.BasketParagraphBooked;
+import models.Basket;
+import models.BasketParagraph;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service("BasketParagraphService")
-
 public class BasketParagraphService implements IBasketParagraphService {
 
     IBasketParagraphDao myBp;
 
-    public BasketParagraphService(IBasketParagraphDao bpd) {
+    IBasketDao myBasket;
+
+    public BasketParagraphService(IBasketParagraphDao bpd, IBasketDao b) {
         myBp = bpd;
-    }
-    @Override
-    public void deleteBasketParagraph(Long bpId) {
-        myBp.deleteBasketParagraph(bpId);
+        myBasket = b;
     }
 
-    @Override
-    public BasketParagraph createBasketParagraph(Long bookId, Long basketId, int number, Double cost) {
-
-        return myBp.createBasketParagraph(bookId, basketId, number, cost*number);
-    }
+  /*
 
     @Override
     public List<BasketParagraphBooked> getAllBasketParagraphsOfBasket(Long basketId) {
@@ -64,11 +59,6 @@ public class BasketParagraphService implements IBasketParagraphService {
     }
 
     @Override
-    public void createBasketParagraph(BasketParagraph bp) {
-        myBp.createBasketParagraph(bp.getBookId(), bp.getBasketId(), bp.getNumberOfBooks(), bp.getSum());
-    }
-
-    @Override
     public List<BasketParagraphBooked> getAllBasketParagraphsOfOrders(Long id) {
         return myBp.getAllBasketParagraphsOfOrder(id);
     }
@@ -82,4 +72,55 @@ public class BasketParagraphService implements IBasketParagraphService {
     public void setPrice(Long id, Double cout) {
         myBp.setPrice(id, cout);
     }
+*/
+    @Override
+    public void delete(BasketParagraph basketParagraph) {
+        myBp.delete(basketParagraph);
+
+       // изменить сумму баскета
+        // myBaket.setSum();
+    }
+
+    @Override
+    public BasketParagraph save(BasketParagraph bp) {
+        return myBp.save(bp);
+        // изменить сумму баскета
+        // myBaket.setSum();
+    }
+
+    @Override
+    public void update(BasketParagraph bp) {
+        myBp.update(bp);
+        // изменить сумму баскета
+        // myBaket.setSum();
+    }
+
+    @Override
+    public List<BasketParagraph> getAllBasketParagraphs() {
+        return myBp.getAllBasketParagraphs();
+    }
+
+    @Override
+    public List<BasketParagraph> getAllBasketParagraphsByBasket(Basket basket) {
+        return myBp.getBasketParagraphsOfBasket(basket);
+    }
+
+    @Override
+    public BasketParagraph getBasketParagraphByBasketParagraphId(Long id) {
+        return myBp.getBasketParagraphByBasketParagraphId(id);
+    }
+
+    @Override
+    public void editNumberOfBooks(BasketParagraph bp, int newNumber) {
+        Double price = bp.getSum()/bp.getNumberOfBooks();
+        bp.setNumberOfBooks(newNumber);
+        bp.setSum(price * newNumber);
+        update(bp);
+    }
+
+    @Override
+    public BasketParagraph getBasketParagraphByBasketAndBook(long basketId, long bookId) {
+        return myBp.getBasketParagraphByBasketAndBook(basketId, bookId);
+    }
+
 }

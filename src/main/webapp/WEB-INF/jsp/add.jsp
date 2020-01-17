@@ -1,5 +1,5 @@
-<%@ page import="classes.BasketParagraph" %>
-<%@ page import="classes.User" %>
+<%@ page import="models.BasketParagraph" %>
+<%@ page import="models.User" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 
 <%--
@@ -72,11 +72,8 @@
                 out.println("<li class='memberOfMenu'><a href='/springMVC_war_exploded/user/logout'>Выйти</a></li>");
                 out.println("<li class='memberOfMenu'><a href='/springMVC_war_exploded/user'>Моя страница</a></li>");
                 out.println("<li class='memberOfMenu'><a href='/springMVC_war_exploded/basket/orders'>Мои заказы</a><li>");
-                if (user.getAccessCode()==2) // ЕСЛИ ЭТО АДМИН
-                {
                     out.println("<li class='memberOfMenu'><a href='/springMVC_war_exploded/admin/addBook'>ДОБАВИТЬ КНИГУ</a></li>");
                     out.println("<li class='memberOfMenu'><a href='/springMVC_war_exploded/user/addAdmin'>ДОБАВИТЬ АДМИНИСТРАТОРА</a></li>");
-                }
             }
         }
         catch(NullPointerException np)

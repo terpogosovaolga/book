@@ -104,27 +104,26 @@
     </style>
 </head>
 <body>
-    <ul class="menu">
+   <!-- <ul class="menu">
         <li class='memberOfMenu'><a href='/springMVC_war_exploded/'>Главная</a></li>
         <li class='memberOfMenu'><a href='/springMVC_war_exploded/catalog'>Каталог</a></li>
         <li class='memberOfMenu'><a href='/springMVC_war_exploded/user/register'>Зарегистрироваться</a></li>
     </ul>
-    <c:if test= "${not empty param.error}">
-        <font size= "2" color= "red"><b>Неправильный логин или пароль</b></font>
-    </c:if>
+   -->
 
-    <div class="main_form">
-        <p class="mainForm_header">Войдите</p>
-        <div class="main_form_inner">
-            <form:form modelAttribute="user" method="post" commandName="user" class="form">
-                <form:input path="email" name="j_username" type="email" placeholder="email" />
-                <br>
-                <form:input path="password" name="j_password" type="password" placeholder="password" />
-                <br>
-                <form:button type="submit">Login</form:button>
-            </form:form>
-        </div>
-    </div>
+    <h1>Spring Security - Sign In</h1>
+
+	<div style="color: red">${message}</div>
+
+	<form class="login-form" action="j_spring_security_check" method="post">
+			<label for="j_username">Username: </label>
+		 	<input id="j_username" name="j_username" size="20" maxlength="50" type="text" />
+
+			<label for="j_password">Password: </label>
+			<input id="j_password" name="j_password" size="20" maxlength="50" type="password" />
+
+			<input type="submit" value="Login" />
+	</form>
 </body>
 </html>
 

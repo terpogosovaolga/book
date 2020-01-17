@@ -1,23 +1,28 @@
 package Services;
 
-import classes.Basket;
-import classes.User;
+import models.User;
 
 import java.util.List;
 
 public interface IUserService {
-    public List<User> getUsers();
-    public User getUserById(Long id);
+    List<User> getUsers();
 
-    User editUser(User user);
+    User getUserById(Long id);
 
-    User login(String email, String password);
+    User getUserByEmail(String email);
 
-    public Basket getBasket(Long userId);
+    void update(User user);
 
-    Long register(int accessCode, String email, String name, String fullname, String password);
+    void delete(User user);
 
-    long getNumberOfUsers();
+    void save(User user);
 
-    void deleteUser(Object anonId);
+   // User login(String email, String password);
+
+   // Long register(String email, String password);
+
+  //  long getNumberOfUsers();
+
+   //User getUser(String email);
+
 }

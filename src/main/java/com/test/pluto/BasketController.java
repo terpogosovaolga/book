@@ -1,16 +1,19 @@
 package com.test.pluto;
 
-import Services.IBasketParagraphService;
-import Services.IBasketService;
-import Services.IBookService;
+import Services.*;
 import classes.*;
+import models.Basket;
+import models.BasketParagraph;
+import models.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.servlet.http.HttpSession;
+import javax.annotation.security.RolesAllowed;
+import java.security.Principal;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,65 +28,57 @@ public class BasketController {
     private IBasketParagraphService myBp;
     @Autowired
     private IBookService myBs;
-
     @Autowired
-    public BasketController(IBasketService bs, IBasketParagraphService bps) {
+    private IUserService myUser;
+
+    /*public BasketController(IBasketService bs, IBasketParagraphService bps) {
         myBasket = bs;
         myBp = bps;
+    }*/
+
+    @Autowired
+    public BasketController(BasketService basketService, BasketParagraphService basketParagraphService, BookService bookService, UserService userService) {
+        myBasket = basketService;
+        myBp = basketParagraphService;
+        myBs = bookService;
+        myUser = userService;
     }
 
-   /* @RequestMapping(value = "/delete/{bpId}", method={RequestMethod.GET})
-    @ResponseBody
-    public void addBPInSession(@PathVariable("bpId") Long bpId, HttpSession session) throws Exception { // returns sessionId
-        session.setAttribute("basketParagraphId", bpId);
 
-    }*/
-/*
- @RequestMapping(value = "/delete/{bpId}", method={RequestMethod.GET})
+    @RequestMapping(value = "/delete/{bpId}", method={RequestMethod.GET})
     @ResponseBody
-    public ModelAndView deleteBasketParagraph(@PathVariable("bpId") Long bpId, HttpSession session) throws Exception { // returns sessionId
-     System.out.println("id of deleted bp: " + bpId);
-     myBp.deleteBasketParagraph(bpId);
-     System.out.println("deleted");
-     // изменяем общую сумму корзины
-     updateCostOfBasket(bpId, session);
-     return getBasket(session);
+    public ModelAndView deleteBasketParagraph(@PathVariable("bpId") Long bpId, Principal principal) throws Exception { // returns sessionId
+     BasketParagraph bp = myBp.getBasketParagraphByBasketParagraphId(bpId);
+     myBp.delete(bp);
+     return getBasket(principal);
     }
 
     @RequestMapping(value = "/editNumber/{bpId}", method={RequestMethod.POST})
     @ResponseBody
-    public ModelAndView editNumberOfBooks(HttpSession session, @PathVariable("bpId") Long bpId, int newNumber) throws Exception { // returns sessionId
-        User user = getUser(session);
-        myBp.editNumberOfBooks(bpId, newNumber);
-        // изменяем общую сумму корзины
-        updateCostOfBasket( myBasket.getBasketByUserId(user.getId()).getId(), session);
-        return getBasket(session);
+    public ModelAndView editNumberOfBooks(@PathVariable("bpId") Long bpId, int newNumber,  Principal principal) throws Exception { // returns sessionId
+        BasketParagraph bp = myBp.getBasketParagraphByBasketParagraphId(bpId);
+        myBp.editNumberOfBooks(bp, newNumber);
+        return getBasket(principal);
     }
 
-    @RequestMapping(value = "/clean", method={RequestMethod.GET})
+    @RequestMapping(value = "/clean/{bpId}", method={RequestMethod.GET})
     @ResponseBody
-    public ModelAndView cleanBasket(HttpSession session) throws Exception {
-        User user = getUser(session);
-        Basket basket = myBasket.getBasketByUserId(user.getId());
-        myBp.deleteBasketParagraphs(basket.getId());
-        myBasket.cleanBasket(basket.getId());
-        return getBasket(session); // обновляем страницу и возвращаем новое пустое содержимое
+    public ModelAndView cleanBasket(@PathVariable("bpId") Long bpId,  Principal principal) throws Exception {
+        myBasket.delete(myBasket.getBasketByBasketId(bpId));
+        return getBasket(principal); // обновляем страницу и возвращаем новое пустое содержимое
     }
-
-    @GetMapping(value="/get")
+    //ЗАВИСИТ ОТ uSER
+    @RequestMapping(method = {RequestMethod.GET})
     @ResponseBody
-    public ModelAndView getBasket(HttpSession session)
+    public ModelAndView getBasket(Principal principal)
     {
-        //System.out.println("You are in basketController");
         Map<String, Object> map = new HashMap<>();
         ModelAndView model = new ModelAndView("basket");
-        User user = getUser(session);
+        User user = myUser.getUserByEmail(principal.getName());
         try {
-            System.out.println("ID OF USER: " + user.getId());
             Basket basket = myBasket.getBasketByUserId(user.getId());
-            System.out.println("basket: " + basket.getId());
             map.put("basket", basket);
-            map.put("basketParagraphs", myBp.getAllBasketParagraphsOfBasket(basket.getId()));
+            map.put("basketParagraphs", myBp.getAllBasketParagraphsByBasket(basket));
         }
         catch(NullPointerException e)  {
             map.put("message", "Ваша корзина пуста :С");
@@ -97,32 +92,20 @@ public class BasketController {
     public ModelAndView displayAdding(@PathVariable Long bookId){
         BasketParagraph bp = new BasketParagraph(bookId);
         bp.setNumberOfBooks(1);
-        System.out.println("book price :" + myBs.getBookById(bookId).getCout());
         bp.setSum(myBs.getBookById(bookId).getCout());
         return new ModelAndView("add", "basketParagraph", bp);
     }
-
+//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!---ПРОВЕРИТЬ, ЕСТЬ ЛИ В BASKETPARAGRAPH BASKETID---!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     @RequestMapping(value="/add/{bookId}", method=RequestMethod.POST)
-    public ModelAndView addBookToBasket(HttpSession session, @PathVariable Long bookId, @ModelAttribute BasketParagraph basketParagraph) throws Exception {
-        System.out.println("-------------------------------------------------------");
-        System.out.println("Начинаем добавлять книгу");
-        System.out.println("basket paragraph: ");
-        System.out.println("its sum : " + basketParagraph.getSum());
-        System.out.println("its number of books: " + basketParagraph.getNumberOfBooks());
+    public ModelAndView addBookToBasket(@PathVariable Long bookId, @ModelAttribute BasketParagraph basketParagraph, Principal principal) throws Exception {
+        myBp.save(basketParagraph);
+        ModelAndView model = new ModelAndView();
+        return getBasket(principal);
+        /*
         Basket basket;
-        User user = getUser(session);
-
-        // ПРОВЕРЯЕМ, ЕСТЬ ЛИ У ПОЛЬЗОВАТЕЛЯ КОРЗИНА. ЕСЛИ НЕТ, СОЗДАЕМ ЕЕ
-        System.out.println("есть ли корзина у этого пользователя?");
+        User user = myUser.getUserByEmail(principal.getName());
         try {
-            System.out.println("проверяем");
             basket = myBasket.getBasketByUserId(user.getId());  //БАСКЕТ, ЕСЛИ КОРЗИНА УЖЕ БЫЛА
-            System.out.println("есть. ее айди : " + basket.getId());
-
-            // ПРОВЕРЯЕМ, ЕСТЬ ЛИ В КОРЗИНЕ У ПОЛЬЗОВАТЕЛЯ ПАРАГРАФ С ЭТОЙ КНИГОЙ
-
-            System.out.println("проверим, есть ли БП:");
-            System.out.println("its sum : " + basketParagraph.getSum());
             BasketParagraph bp = myBp.getBasketParagraphByBasketAndBook(basket.getId(), basketParagraph.getBookId());
             try {
                 //если уже есть такая книга
@@ -167,72 +150,47 @@ public class BasketController {
             System.out.println("БП создан в бд");
         }
         updateCostOfBasket(basket.getId(), session);
-        return getBasket(session);
+        return getBasket(session);*/
     }
 
+    @RolesAllowed(value={"ROLE_USER", "ROLE_ADMIN"})
     @GetMapping(value="buy")
-    public String displayPayForm(Model model, HttpSession session) {
-        User user = getUser(session);
+    public String displayPayForm(Model model, Principal principal) {
+        User user = myUser.getUserByEmail(principal.getName());
         Basket basket = myBasket.getBasketByUserId(user.getId());
-        session.setAttribute("basket", basket);
         model.addAttribute("card", new Card());
         return "pay";
     }
 
+    @RolesAllowed(value={"ROLE_USER", "ROLE_ADMIN"})
     @RequestMapping(value = "/buy", method = RequestMethod.POST)
     @ResponseBody
-    public ModelAndView pay(@ModelAttribute Card card, HttpSession session) {
-        Basket basket = (Basket) session.getAttribute("basket");
-        myBasket.setDateOfPurchase(basket.getId(), java.util.Calendar.getInstance().getTime());
-        session.removeAttribute("basket");
-        return getOrders(session);
+    public ModelAndView pay(@ModelAttribute Card card, Principal principal) {
+        User user = myUser.getUserByEmail(principal.getName());
+        Basket basket = myBasket.getBasketByUserId(user.getId());
+        myBasket.setDateOfPurchase(basket, java.util.Calendar.getInstance().getTime());
+        return getOrders(principal);
     }
 
+    @RolesAllowed(value={"ROLE_USER", "ROLE_ADMIN"})
     @GetMapping(value="/orders")
     @ResponseBody
-    public ModelAndView getOrders(HttpSession session){
+    public ModelAndView getOrders(Principal principal){
         ModelAndView model = new ModelAndView("order");
         Map<String, Object> map = new HashMap<>();
-        User user = getUser(session);
+        User user = myUser.getUserByEmail(principal.getName());
         List<Basket> orders = myBasket.getOrdersByUserId(user.getId());
         map.put("orders", orders);
-        map.put("ordersParagraphs", myBp.getAllBasketParagraphsOfOrders(user.getId()));
+        List<BasketParagraph> bps = new ArrayList<>();
+        for (Basket b : orders)
+        {
+            bps.addAll(myBp.getAllBasketParagraphsByBasket(b));
+        }
+        map.put("ordersParagraphs", bps);
         model.addObject("map", map);
         return model;
     }
 
 
-    private void updateCostOfBasket(Long basketId, HttpSession session) throws Exception {
-        List<BasketParagraphBooked> allBp = myBp.getAllBasketParagraphsOfBasket(basketId);
-        Double cout = 0.0;
-        System.out.println("updating basketId......" + basketId);
-        System.out.println("Вы в апдейте");
-        if (allBp.size()==0) {
-            System.out.println("нет параграфов. сумма 0");
-            cleanBasket(session);
-        }
-        else {
-            System.out.println("Начинаем обнволять стоимость корзины!");
-            for (BasketParagraphBooked bpb : allBp) {
-                System.out.println("Paragraph id: " + bpb.getId() + " its sum: " + bpb.getSum());
-                cout += bpb.getSum();
-                System.out.println("new sum after " + bpb.getId() + ": " + cout);
-            }
-            myBasket.updateCostOfBasket(basketId, cout);
-        }
-    }
-
-
-    private User getUser(HttpSession session){
-        User user = (User) session.getAttribute("user");
-        try {
-            if (!user.equals(null)) {
-            }
-        }
-        catch(NullPointerException e) {
-            user = (User) session.getAttribute("anonId");
-        }
-        return user;
-    }*/
 }
 

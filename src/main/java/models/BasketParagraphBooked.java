@@ -1,8 +1,10 @@
-package classes;
+package models;
 
 import org.jetbrains.annotations.NotNull;
 
-public class BasketParagraphBooked  {
+import java.io.Serializable;
+
+public class BasketParagraphBooked   implements Serializable {
     public BasketParagraphBooked() {}
 
     public BasketParagraphBooked(BasketParagraph bp, Book book) {
@@ -69,5 +71,13 @@ public class BasketParagraphBooked  {
 
     public void setSum(@NotNull Double sum) {
         this.sum = sum;
+    }
+
+    public boolean equals(BasketParagraphBooked bpb) {
+        if (bpb==null) return false;
+        if (bpb==this) return true;
+        if (!bpb.book.equals(book)) return false;
+
+        return(bpb.basketId != basketId);
     }
 }

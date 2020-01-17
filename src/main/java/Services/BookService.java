@@ -1,14 +1,15 @@
 package Services;
 
+import Dao.IBasketParagraphDao;
 import Dao.IBookDao;
-import classes.Book;
+import models.BasketParagraph;
+import models.Book;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
+@Service
 public class BookService implements IBookService {
 
     @Autowired
@@ -20,16 +21,49 @@ public class BookService implements IBookService {
     @Autowired
     IBookDao bookDao;
 
+    @Autowired
+    IBasketParagraphDao basketParagraphDao;
+
 
     @Override
-    public List<Book> getBooks() {
-
+    public List<Book> getAllBooks() {
         return bookDao.getAllBooks();
     }
 
     @Override
     public Book getBookById(Long id) {
         return bookDao.getBookById(id);
+    }
+
+    @Override
+    public void delete(Book book) {
+        bookDao.delete(book);
+    }
+
+    @Override
+    public void save(Book book) {
+        bookDao.save(book);
+    }
+
+    @Override
+    public void update(Book book) {
+        Book preBook = bookDao.getBookById(book.getId());
+        bookDao.update(book);
+        //if price of book changed
+        if(book.getCout() != preBook.getCout())
+        {
+            //we should change sums of basketparagraphs
+            List<BasketParagraph> bps = basketParagraphDao.getBasketParagraphsOfBook(book);
+            for (BasketParagraph bp : bps)
+            {
+                basketParagraphDao.updateSum(book.getCout()-preBook.getCout(), bp);
+            }
+        }
+    }
+
+    @Override
+    public void view(Book book) {
+        bookDao.view(book);
     }
 
     @Override
@@ -58,14 +92,10 @@ public class BookService implements IBookService {
     }
 
     @Override
-    public List<Book> getBooksOfAuthor(String surname) {
-        return bookDao.getBooksOfAuthor(surname);
+    public List<Book> getBooksOfAuthor(String surname, String name) {
+        return bookDao.getBooksOfAuthor(surname, name);
     }
-
-    @Override
-    public List<Book> getBooksOfAuthor(String name, String surname) {
-        return bookDao.getBooksOfAuthor(name, surname);
-    }
+/*
 
     @Override // перенести к BasketParagraph
     public void addBookToBasket(Long bookId, Integer number, Long userId) {
@@ -104,10 +134,10 @@ public class BookService implements IBookService {
                 result.add(book);
                 System.out.println("we added book " + book.getName() + " NAME");
             }
-            /*else if (book.getDescription().toLowerCase().contains(search)) {
+            else if (book.getDescription().toLowerCase().contains(search)) {
                 result.add(book);
                 System.out.println("we added book " + book.getName() + " DESCRIPTION");
-            }*/
+            }
             else if (!search.contains(" ")) {
                 String[] bookName = book.getName().toLowerCase().split(" ");
                 for (int i = 0; i<bookName.length; i++)
@@ -196,10 +226,10 @@ public class BookService implements IBookService {
             else if (value.equals("english"))
                 return "английский";
             System.out.println(key + " : " + value);
-        } /*else if (key.equals("price")) {
+        } else if (key.equals("price")) {
             value = Double.parseDouble((String) value);
-            System.out.println(key + " : " + value);*/
+            System.out.println(key + " : " + value);
         return value;
-        }
+        }*/
 
 }

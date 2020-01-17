@@ -1,33 +1,16 @@
 package Dao;
 
-import classes.Book;
+import Hibernate.HibernateSessionFactory;
+import models.Book;
+import org.hibernate.Query;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
 
 import java.util.List;
-import java.util.Map;
 
 public class BookDao implements IBookDao {
-
-
-    RowMapper<Book> mapper = (resultSet, rowNum) -> new Book(resultSet.getLong("Book_id"),
-            resultSet.getString("Author_name"),
-            resultSet.getString("Author_secondname"),
-            resultSet.getString("Author_surname"),
-            resultSet.getString("Book_name"),
-            resultSet.getInt("Year_of_writing"),
-            resultSet.getString("Publisher"),
-            resultSet.getInt("Year_of_publishing"),
-            resultSet.getString("Translater"),
-            resultSet.getInt("Pages_number"),
-            resultSet.getString("Genre"),
-            resultSet.getString("Original_language"),
-            resultSet.getString("Language"),
-            resultSet.getDouble("Price"),
-            resultSet.getInt("Count"),
-            resultSet.getString("Description"),
-            resultSet.getInt("Number_of_watchings"));
 
     @Autowired
     private final JdbcTemplate jdbcTemplate;
@@ -37,133 +20,174 @@ public class BookDao implements IBookDao {
         this.jdbcTemplate = jdbcTemplate;
     }
 
+        @Override
+        public List<Book> getAllBooks() {
+            List<Book> books = (List<Book>) HibernateSessionFactory.getSessionFactory().openSession().createQuery("From Book").list();
+            return books;
+        }
+    /*
+        @Override
+        public List<Book> getPopularBooks() {
+
+            return jdbcTemplate.query("select * from Books order by Number_of_watchings desc limit 10", mapper);
+        }
+
+        @Override
+        public List<Book> getNewArrivals() {
+
+            return jdbcTemplate.query("select *  from Books order by book_id desc limit 10", mapper);
+        }
+
+        @Override
+        public List<Book> getPoems() {
+            return jdbcTemplate.query("select * from Books where genre = 'поэзия' limit 10", mapper);
+        }
+
+        @Override
+        public List<Book> getNovels() {
+            return jdbcTemplate.query("select * from books where genre = 'роман' limit 10", mapper);
+        }
+
+        @Override
+        public List<Book> getBooksOfAuthor(String surname) {
+            return jdbcTemplate.query("select * from books where author_surname=? limit 10", new Object[]{surname}, mapper);
+
+        }
+
+        @Override
+        public List<Book> getBooksOfAuthor(String name, String surname){
+            return jdbcTemplate.query("select * from books where author_name=? and author_surname = ? limit 10" , new Object[]{name, surname}, mapper);
+
+        }
+
+        @Override
+        public List<Book> getSmallBooks() {
+            return jdbcTemplate.query("select * from books order by pages_number limit 10", mapper);
+        }
+    */
+    @Override
+    public Book getBookById(Long id) {
+        return  HibernateSessionFactory.getSessionFactory().openSession().get(Book.class, id);
+
+    }
 
     @Override
-    public List<Book> getAllBooks() {
-        return jdbcTemplate.query("select * from Books", mapper);
+    public void save(Book book) {
+        Session session = HibernateSessionFactory.getSessionFactory().openSession();
+        Transaction tx1 = session.beginTransaction();
+        session.save(book);
+        tx1.commit();
+        session.close();
+    }
+
+    @Override
+    public void delete(Book book) {
+        Session session = HibernateSessionFactory.getSessionFactory().openSession();
+        Transaction tx1 = session.beginTransaction();
+        session.delete(book);
+        tx1.commit();
+        session.close();
     }
 
     @Override
     public List<Book> getPopularBooks() {
-
-        return jdbcTemplate.query("select * from Books order by Number_of_watchings desc limit 10", mapper);
+        Session session = HibernateSessionFactory.getSessionFactory().openSession();
+        Query query = session.createQuery("from Book where numberOfWatching >= 1000");
+        Transaction tx1 = session.beginTransaction();
+        List<Book> result = query.list();
+        tx1.commit();
+        session.close();
+        return result;
     }
 
     @Override
     public List<Book> getNewArrivals() {
-
-        return jdbcTemplate.query("select *  from Books order by book_id desc limit 10", mapper);
+        Session session = HibernateSessionFactory.getSessionFactory().openSession();
+        Query query = session.createQuery("from Book where yearOfPublishing >= 2018");
+        Transaction tx1 = session.beginTransaction();
+        List<Book> result = query.list();
+        tx1.commit();
+        session.close();
+        return result;
     }
 
     @Override
     public List<Book> getPoems() {
-        return jdbcTemplate.query("select * from Books where genre = 'поэзия' limit 10", mapper);
+        Session session = HibernateSessionFactory.getSessionFactory().openSession();
+        Query query = session.createQuery("from Book where genre = 'стихи'");
+        Transaction tx1 = session.beginTransaction();
+        List<Book> result = query.list();
+        tx1.commit();
+        session.close();
+        return result;
     }
 
     @Override
     public List<Book> getNovels() {
-        return jdbcTemplate.query("select * from books where genre = 'роман' limit 10", mapper);
-    }
-
-    @Override
-    public List<Book> getBooksOfAuthor(String surname) {
-        return jdbcTemplate.query("select * from books where author_surname=? limit 10", new Object[]{surname}, mapper);
-
-    }
-
-    @Override
-    public List<Book> getBooksOfAuthor(String name, String surname){
-        return jdbcTemplate.query("select * from books where author_name=? and author_surname = ? limit 10" , new Object[]{name, surname}, mapper);
-
+        Session session = HibernateSessionFactory.getSessionFactory().openSession();
+        Query query = session.createQuery("from Book where genre = 'роман' OR genre='роман-эпопея'");
+        Transaction tx1 = session.beginTransaction();
+        List<Book> result = query.list();
+        tx1.commit();
+        session.close();
+        return result;
     }
 
     @Override
     public List<Book> getSmallBooks() {
-        return jdbcTemplate.query("select * from books order by pages_number limit 10", mapper);
+        Session session = HibernateSessionFactory.getSessionFactory().openSession();
+        Query query = session.createQuery("from Book where countOfPages < 200");
+        Transaction tx1 = session.beginTransaction();
+        List<Book> result = query.list();
+        tx1.commit();
+        session.close();
+        return result;
     }
 
     @Override
-    public Book getBookById(Long id) {
-        return jdbcTemplate.queryForObject("Select * from Books where Book_id = ?", new Object[]{id}, mapper);
-
+    public List<Book> getBooksOfAuthor(String surname, String name) {
+        Session session = HibernateSessionFactory.getSessionFactory().openSession();
+        Query query = session.createQuery("from Book where authorSureName = :surname and authorName = :name");
+        query.setParameter("surname", surname);
+        query.setParameter("name", name);
+        Transaction tx1 = session.beginTransaction();
+        List<Book> result = query.list();
+        tx1.commit();
+        session.close();
+        return result;
     }
 
     @Override
-    public void admin_addBook(Book book) {
-         jdbcTemplate.update("insert into books(Author_name, Author_surname, Book_name, Year_of_writing, Publisher, Year_of_publishing, " +
-                                "Original_language, Price, Count, Genre)" +
-                "        values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", new Object[]{book.getAuthorName(), book.getAuthorSureName(),
-                            book.getName(), book.getYearOfWriting(), book.getPublisher(), book.getYearOfPublishing(), book.getOriginalLanguage(),
-                            book.getCout(), book.getCount(), book.getGenre()});
-         long index = jdbcTemplate.queryForObject("select max(book_id) from Books", Long.class);
-
-         if (!book.getAuthorSecondName().equals(null)) {
-             jdbcTemplate.update("update Books set Author_secondName=? where book_id=?", new Object[]{book.getAuthorSecondName(), index});
-         }
-
-        if (!book.getDescription().equals(null)) {
-            jdbcTemplate.update("update Books set Description=? where book_id=?", new Object[]{book.getDescription(), index});
-        }
-
-        if (book.getCountOfPages()!=0) {
-            jdbcTemplate.update("update Books set Pages_number=? where book_id=?", new Object[]{book.getCountOfPages(), index});
-        }
-        if (!book.getTranslater().equals(null)) {
-            jdbcTemplate.update("update Books set Translater=? where book_id=?", new Object[]{book.getTranslater(), index});
-        }
-
-        if (!book.getGenre().equals(null)) {
-            jdbcTemplate.update("update Books set Genre=? where book_id=?", new Object[]{book.getGenre(), index});
-        }
-
-
+    public void update(Book book) {
+        Session session = HibernateSessionFactory.getSessionFactory().openSession();
+        Transaction tx1 = session.beginTransaction();
+        session.update(book);
+        tx1.commit();
+        session.close();
     }
 
+    @Override
+    public void view(Book book) {
+        Session session = HibernateSessionFactory.getSessionFactory().openSession();
+        Transaction tx1 = session.beginTransaction();
+        Query miniQuery = session.createQuery("select numberOfWatching from Book where id = :bookId");
+        miniQuery.setParameter("bookId", book.getId());
+        int views = miniQuery.getFirstResult();
+        Query query = session.createQuery("update Book set numberOfWatching = :newViews where id = :bookId");
+        query.setParameter("newViews", views+1);
+        query.setParameter("bookId", book.getId());
+        query.executeUpdate();
+        tx1.commit();
+        session.close();
+    }
+/*
     @Override
     public void increaseNumberOfWatchings(Long book_id) {
         int views = jdbcTemplate.queryForObject("select Number_of_watchings  from Books where Book_id=?", new Object[]{book_id}, Integer.class);
         jdbcTemplate.update("update Books set Number_of_watchings=? where book_id=?", new Object[]{views+1, book_id});
-    }
+    }*/
 
-    @Override
-    public void updateBook(Book book){
-        jdbcTemplate.update("update Books set Author_Name=?, " +
-                        "Author_SecondName=?, " +
-                        "Author_SurName=?, " +
-                        "Book_Name=?," +
-                "Year_of_writing=?, " +
-                        "Publisher=?, " +
-                        "Year_of_publishing=?, " +
-                        "Translater=?, " +
-                        "Pages_number=?, " +
-                        "Genre=?, " +
-                "Original_language=?, " +
-                        "Language=?, " +
-                        "Price=?, " +
-                        "Count=?, " +
-                        "Description=?, " +
-                        "Number_of_watchings=? " +
-                        "where Book_id=?",
-                new Object[]{book.getAuthorName(),
-                        book.getAuthorSecondName(),
-                        book.getAuthorSureName(),
-                        book.getName(),
-                book.getYearOfWriting(),
-                        book.getPublisher(),
-                        book.getYearOfPublishing(),
-                        book.getTranslater(),
-                        book.getCountOfPages(),
-                book.getGenre(),
-                        book.getOriginalLanguage(),
-                        book.getLanguage(),
-                        book.getCout(),
-                        book.getCount(),
-                book.getDescription(),
-                        book.getNumberOfWatching(),
-                        book.getId()});
-
-    }
-
+/*
     @Override
     public List<Book> search(String key, String value) {
         String sql = new String();
@@ -199,5 +223,5 @@ public class BookDao implements IBookDao {
         System.out.println("query: " + sql);
         return jdbcTemplate.query(sql, mapper);
     }
-
+*/
 }

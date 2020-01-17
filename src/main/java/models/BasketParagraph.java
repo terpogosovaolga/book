@@ -1,11 +1,14 @@
-package classes;
+package models;
 
 import org.jetbrains.annotations.NotNull;
 import org.springframework.web.bind.annotation.ModelAttribute;
 
-import java.util.Date;
+import javax.persistence.*;
+import java.io.Serializable;
 
-public class BasketParagraph {
+@Entity
+@Table(name="basketparagraphs")
+public class BasketParagraph implements Serializable {
 
     public BasketParagraph(long id, long basketId, long bookId, int number, Double sum) {
         this.id = id;
@@ -21,19 +24,27 @@ public class BasketParagraph {
     }
 
     public BasketParagraph() {}
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @NotNull
+    @Column(name="BasketParagraph_id")
     private Long id;
 
     @NotNull
+    @Column(name="Basket_id")
     private Long basketId;
 
     @NotNull
+    @Column(name="Book_id")
     private Long bookId;
 
     @NotNull
+    @Column(name="Count")
     private int numberOfBooks;
 
     @NotNull
+    @Column(name="Cost")
     private Double sum;
 
     public BasketParagraph(Long bookId) { this.bookId = bookId;
@@ -86,14 +97,15 @@ public class BasketParagraph {
     }
 
     public boolean equals(BasketParagraph bp) {
-        if(this==null){
-            throw new NullPointerException("this object is null");
-        }
         if(bp==null){
             return false;
         }
         if(bp==this)
             return true;
         return (bp.getBasketId() == getBasketId() && bp.getBookId() == getBookId());
+    }
+
+    public String toString() {
+        return "id: " + getId() + "\n basket id: " + getBasketId() + "\n book id: " + getBookId() + "\n count of books: " + getNumberOfBooks() + "\n sum: " + getSum();
     }
 }

@@ -1,17 +1,25 @@
 package Services;
 
-import classes.Book;
+import models.Book;
 
-import javax.servlet.http.HttpSession;
 import java.util.List;
-import java.util.Map;
 
 public interface IBookService {
-    public List<Book> getBooks();
-    public List<Book> getBooksWithParams(Map<String, String> attrs);
-    public List<Book> getBooksAfterSearch(String search);
-    public Book getBookById(Long id);
-    public List<Book> getPopularBooks();
+
+    List<Book> getAllBooks();
+
+    Book getBookById(Long id);
+
+    void delete(Book book);
+
+    void save(Book book);
+
+    void update(Book book);
+
+    void view(Book book);
+
+    List<Book> getPopularBooks();
+
     List<Book> getNewArrivals();
 
     List<Book> getPoems();
@@ -20,21 +28,28 @@ public interface IBookService {
 
     List<Book> getSmallBooks();
 
-    List<Book> getBooksOfAuthor(String surname);
+    List<Book> getBooksOfAuthor(String surname, String name);
 
-    List<Book> getBooksOfAuthor(String name, String surname);
+   // public List<Book> getBooksWithParams(Map<String, String> attrs);
+   // public List<Book> getBooksAfterSearch(String search);
+   // public List<Book> getPopularBooks();
+   // List<Book> getNewArrivals();
 
-    //public void deleteBookById(Long id);
-    public void addBookToBasket(Long bookId, Integer number, Long userId);
+  //  List<Book> getPoems();
+
+  //  List<Book> getNovels();
+
+   // List<Book> getSmallBooks();
+
+  //  List<Book> getBooksOfAuthor(String surname);
+
+   // List<Book> getBooksOfAuthor(String name, String surname);
+
+  //  void increaseNumberOfWatchings(Long book_id);
 
 
-    void admin_addBook(Book book);
 
-    void increaseNumberOfWatchings(Long book_id);
-
-    void updateBook(Book book);
-
-    List<Book> getBooksWithParams(String key, String value);
+   // List<Book> getBooksWithParams(String key, String value);
 
     //List<Book> getBooksAfterSearchWithParams(HttpSession session);
 }

@@ -1,9 +1,12 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
-<%@ page import="classes.Book" %>
+<%@ taglib prefix="security" uri="http://www.springframework.org/security/tags" %>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core_1_1" %>
+<%@ page import="models.Book" %>
 <%@ page import="java.util.List" %>
 <%@ page import="java.util.Map" %>
 <%@ page import="java.security.Key" %>
-<%@ page import="classes.User" %>
+<%@ page import="models.User" %>
 <%--
   Created by IntelliJ IDEA.
   User: Натусик
@@ -200,33 +203,26 @@
         }
     </style>
 </head>
-<body>
 <ul class='menu'>
+    <security:authorize access="hasAnyRole('ROLE_ADMIN','ROLE_SUPER_USER', 'ROLE_USER')" var= "isUSer"/>
 
-    <li class='memberOfMenu'><a href="/springMVC_war_exploded">Главная</a></li>
-    <li class='memberOfMenu' id="this"><a href="/springMVC_war_exploded/catalog">Каталог</a></li>
-    <li class='memberOfMenu'><a href="/springMVC_war_exploded/basket/get">Корзина</a></li>
-    <li class='memberOfMenu'><a href='/springMVC_war_exploded/basket/orders'>Мои заказы</a><li>
-    <%
-        User user = (User) session.getAttribute("user");
-        try {
-            if (!user.equals(null)) {
-                if (user.getAccessCode()==2) // ЕСЛИ ЭТО АДМИН
-                {
-                    out.println("<li class='memberOfMenu'><a href='/springMVC_war_exploded/admin/addBook'>ДОБАВИТЬ КНИГУ</a></li>");
-                    out.println("<li class='memberOfMenu'><a href='/springMVC_war_exploded/user/addAdmin'>ДОБАВИТЬ АДМИНИСТРАТОРА</a></li>");
-                }
-                out.println("<li class='memberOfMenu'><a href='/springMVC_war_exploded/user'>Моя страница</a></li>");
-                out.println("<li class='memberOfMenu'><a href='/springMVC_war_exploded/user/logout'>Выйти</a></li>");
-            }
-        }
-        catch(NullPointerException np)
-        {
-            User anon = (User) session.getAttribute("anonId");
-            out.println("<li class='memberOfMenu'><a href='/springMVC_war_exploded/user/login'>Войти</a></li>");
-            out.println("<li class='memberOfMenu'><a href='/springMVC_war_exploded/user/register'>Зарегистрироваться</a></li>");
-        }
-        %>
+        <ul class='menu'>
+            <li class='memberOfMenu'><a href="<c:url value='//'/>">Главная</a></li>
+            <li class='memberOfMenu' id="this"><a href="<c:url value='//catalog'/>">Каталог</a></li>
+            <li class='memberOfMenu'><a href="<c:url value='/basket/get'/>">Корзина</a></li>
+            <li class='memberOfMenu'><a href="<c:url value='/basket/orders'/>">Мои заказы</a></li>
+            <c:if test="${isUSer}">
+                <li class='memberOfMenu'><a href="<c:url value='/logout'/>">Выйти</a></li>
+                <li class='memberOfMenu'><a href="<c:url value='/user'/>">Моя страница</a></li>
+            </c:if>
+            <!--<sec:authorize access="hasAnyRole('ROLE_ADMIN')">
+                <li class='memberOfMenu'><a href='/springMVC_war_exploded/admin'>Администратор</a></li>
+            </sec:authorize>-->
+            <c:if test="${not isUSer}">
+                <li class='memberOfMenu'><a href="<c:url value='user/login'/>">Войти</a></li>
+                <li class='memberOfMenu'><a href="<c:url value='/user/register'/>">Зарегистрироваться</a></li>
+            </c:if>
+        </ul>
 
 
 </ul>
@@ -252,62 +248,54 @@
 <div class="searchParams">
     <div class="searchParams_component">
         <p class="category">Жанр</p>
-        <div class="searchParams_component_a"><a href="/springMVC_war_exploded/search/genre/novel">романы</a></div>
-        <div class="searchParams_component_a"><a href="/springMVC_war_exploded/search/genre/poem">поэзия и стихи</a></div>
-        <div class="searchParams_component_a"><a href="/springMVC_war_exploded/search/genre/detective">детективы</a></div>
-        <div class="searchParams_component_a"><a href="/springMVC_war_exploded/search/genre/tale">сказки</a></div>
+        <div class="searchParams_component_a"><a href="<c:url value='/search/genre/novel'/>">романы</a></div>
+        <div class="searchParams_component_a"><a href="<c:url value='/search/genre/poem'/>">поэзия и стихи</a></div>
+        <div class="searchParams_component_a"><a href="<c:url value='/search/genre/detective'/>">детективы</a></div>
+        <div class="searchParams_component_a"><a href="<c:url value='/search/genre/tale'/>">сказки</a></div>
     </div>
     <div class="searchParams_component">
         <p class="category">Издательство</p>
-        <div class="searchParams_component_a"><a href="/springMVC_war_exploded/search/publisher/eksmo">Эксмо</a></div>
-        <div class="searchParams_component_a"><a href="/springMVC_war_exploded/search/publisher/azbuka">Азбука</a></div>
-        <div class="searchParams_component_a"><a href="/springMVC_war_exploded/search/publisher/prosveshenie">Просвещение</a></div>
-        <div class="searchParams_component_a"><a href="/springMVC_war_exploded/search/publisher/communizm">Коммунизм</a></div>
+        <div class="searchParams_component_a"><a href="<c:url value='/search/publisher/eksmo'/>">Эксмо</a></div>
+        <div class="searchParams_component_a"><a href="<c:url value='/search/publisher/azbuka'/>">Азбука</a></div>
+        <div class="searchParams_component_a"><a href="<c:url value='/search/publisher/prosveshenie'/>">Просвещение</a></div>
+        <div class="searchParams_component_a"><a href="<c:url value='/search/publisher/communizm'/>">Коммунизм</a></div>
     </div>
     <div class="searchParams_component">
         <p class="category">Язык</p>
-        <div class="searchParams_component_a"><a href="/springMVC_war_exploded/search/language/russian">Русский</a></div>
-        <div class="searchParams_component_a"><a href="/springMVC_war_exploded/search/language/english">Английский</a></div>
-        <div class="searchParams_component_a"><a href="/springMVC_war_exploded/search/language/untranslated">Без перевода</a></div>
+        <div class="searchParams_component_a"><a href="<c:url value='/search/language/russian'/>">Русский</a></div>
+        <div class="searchParams_component_a"><a href="<c:url value='/search/language/english'/>">Английский</a></div>
+        <div class="searchParams_component_a"><a href="<c:url value='/search/language/untranslated'/>">Без перевода</a></div>
     </div>
     <div class="searchParams_component">
         <p class="category">Цена</p>
-        <div class="searchParams_component_a"><a href="/springMVC_war_exploded/search/price/300">Не дороже 300 рублей</a></div>
-        <div class="searchParams_component_a"><a href="/springMVC_war_exploded/search/price/700">Не дороже 700 рублей</a></div>
-        <div class="searchParams_component_a"><a href="/springMVC_war_exploded/search/price/1000">Не дороже 1000 рублей</a></div>
+        <div class="searchParams_component_a"><a href="<c:url value='/search/price/300'/>">Не дороже 300 рублей</a></div>
+        <div class="searchParams_component_a"><a href="<c:url value='/search/price/700'/>">Не дороже 700 рублей</a></div>
+        <div class="searchParams_component_a"><a href="<c:url value='/search/price/1000'/>">Не дороже 1000 рублей</a></div>
     </div>
 </div>
 
 
     <%
         List<Book> books = (List<Book>) request.getAttribute("result");
-        for (Book b:books)
-        {
-            out.println("<a href='book/"+b.getId() + "'><div class='book'>");
-                out.println("<p class='booksAuthor'>"+b.getFullNameOfAuthor()+"</p>");
-                out.println("<p class='bookName'> " + b.getName() + "</p>");
-                out.println("<div class='attributes'>");
-                    out.println("<div class='one_attr'><label>Год написания: </label><span class='yearOfWriting attr'>" + b.getYearOfWriting() + "г. </span></div>");
-                    out.println("<div class='one_attr'><label>Издательство: </label><span class='publisher attr'>" + b.getPublisher() + "</span></div>");
-                    out.println("<div class='one_attr'><label>Год издательства: </label><span class='yearOfPublishing attr'>" + b.getYearOfPublishing() + " г.</span></div>");
-                    out.println("<div class='one_attr'><label>Цена: </label><span class='price attr'>" + b.getCout() + " Р.</span></div>");
-
-
-                out.println("</div>");
-                out.println("<div class='attributes'>");
-                    out.println("<p class='desc'>" + b.getDescription() + "</p>");
-                out.println("</div>");
-                out.println("</a>");
-            try {
-                if (user.getAccessCode() == 2) {
-                    out.println("<a class='editBook' href='/springMVC_war_exploded/admin/editBook/"+b.getId()+"'>Изменить книгу</a>");
-                }
-            }
-            catch(NullPointerException e){}
+        for (Book b:books) {
+            out.println("<a href='book/" + b.getId() + "'><div class='book'>");
+            out.println("<p class='booksAuthor'>" + b.getFullNameOfAuthor() + "</p>");
+            out.println("<p class='bookName'> " + b.getName() + "</p>");
+            out.println("<div class='attributes'>");
+            out.println("<div class='one_attr'><label>Год написания: </label><span class='yearOfWriting attr'>" + b.getYearOfWriting() + "г. </span></div>");
+            out.println("<div class='one_attr'><label>Издательство: </label><span class='publisher attr'>" + b.getPublisher() + "</span></div>");
+            out.println("<div class='one_attr'><label>Год издательства: </label><span class='yearOfPublishing attr'>" + b.getYearOfPublishing() + " г.</span></div>");
+            out.println("<div class='one_attr'><label>Цена: </label><span class='price attr'>" + b.getCout() + " Р.</span></div>");
             out.println("</div>");
-        }
-    %>
-
+            out.println("<div class='attributes'>");
+            out.println("<p class='desc'>" + b.getDescription() + "</p>");
+            out.println("</div>");
+            out.println("</a>");
+            out.println("<c:if test='${isUSer}'>");
+            out.println("<a class='editBook' href='/springMVC_war_exploded/admin/editBook/" + b.getId() + "'>Изменить книгу</a>");
+            out.println("</c:if>");
+            out.println("</div>");
+        }%>
 </body>
 <script>
     function editLinksSearch(searchvalue){

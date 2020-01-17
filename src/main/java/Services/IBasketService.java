@@ -1,24 +1,34 @@
 package Services;
 
-import classes.Basket;
+import models.Basket;
 
 import java.util.Date;
 import java.util.List;
 
 public interface IBasketService {
 
-    public void cleanBasket(Long id);
+    void delete(Basket basket);
 
-    Basket getBasketByUserId(Long id);
+    Basket getBasketByBasketId(long basketId);
 
-    void updateCostOfBasket(Long userId, Double newCost);
+    void update(Basket basket);
+
+    void save(Basket basket);
+
+    List<Basket> getAllBaskets();
+
+    List<Basket> getOrdersByUserId(long userId);
+
+    Basket getBasketByUserId(long userId);
+
+    void setDateOfPurchase(Basket basket, Date date);
+
+    //void updateCostOfBasket(Long userId, Double newCost);
 
 
-    void createBasket(Long id);
+    //List<Basket> getOrdersByUserId(Long id);
 
-    List<Basket> getOrdersByUserId(Long id);
+    //void setDateOfPurchase(Long id, Date time);
 
-    void setDateOfPurchase(Long id, Date time);
 
-    Basket getBasketByBasketId(Long basketId);
 }

@@ -1,7 +1,10 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@ taglib prefix="input" uri="http://www.springframework.org/tags/form" %>
-<%@ page import="classes.Book" %>
-<%@ page import="classes.User" %><%--
+<%@ taglib prefix="security" uri="http://www.springframework.org/security/tags" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
+<%@ page import="models.Book" %>
+<%@ page import="models.User" %><%--
   Created by IntelliJ IDEA.
   User: Натусик
   Date: 22.10.2019
@@ -151,39 +154,26 @@
 
     </style>
 </head>
-<body>
+<body><security:authorize access="hasAnyRole('ROLE_ADMIN','ROLE_SUPER_USER', 'ROLE_USER')" var= "isUSer"/>
 <ul class='menu'>
-    <li class='memberOfMenu'><a href="/springMVC_war_exploded">Главная</a></li>
-    <li class='memberOfMenu'><a href="/springMVC_war_exploded/catalog">Каталог</a></li>
-    <li class='memberOfMenu'><a href="/springMVC_war_exploded/basket/get">Корзина</a></li>
-    <li class='memberOfMenu'><a href='/springMVC_war_exploded/basket/orders'>Мои заказы</a><li>
-    <%
-        User user = (User) session.getAttribute("user");
-        try {
-            if (!user.equals(null)) {
-                if (user.getAccessCode()==2) // ЕСЛИ ЭТО АДМИН
-                {
-                    out.println("<li class='memberOfMenu'><a href='/springMVC_war_exploded/admin/addBook'>ДОБАВИТЬ КНИГУ</a></li>");
-                    out.println("<li class='memberOfMenu'><a href='/springMVC_war_exploded/user/addAdmin'>ДОБАВИТЬ АДМИНИСТРАТОРА</a></li>");
-                }
-                out.println("<li class='memberOfMenu'><a href='/springMVC_war_exploded/user/logout'>Выйти</a></li>");
-                out.println("<li class='memberOfMenu'><a href='/springMVC_war_exploded/user'>Моя страница</a></li>");
-            }
-        }
-        catch(NullPointerException np)
-        {
-            User anon = (User) session.getAttribute("anonId");
-            out.println("<li class='memberOfMenu'><a href='/springMVC_war_exploded/user/login'>Войти</a></li>");
-            out.println("<li class='memberOfMenu'><a href='/springMVC_war_exploded/user/register'>Зарегистрироваться</a></li>");
-        }
-    %>
-
+    <li class='memberOfMenu'><a href="<c:url value=''/>">Главная</a></li>
+    <li class='memberOfMenu'><a href="<c:url value='//catalog'/>">Каталог</a></li>
+    <li class='memberOfMenu'><a href="<c:url value='//basket/get'/>">Корзина</a></li>
+    <li class='memberOfMenu'><a href="<c:url value='/basket/orders'/>">Мои заказы</a></li>
+    <c:if test="${isUSer}">
+        <li class='memberOfMenu'><a href="<c:url value='/logout'/>">Выйти</a></li>
+        <li class='memberOfMenu'><a href='<c:url value='/user/editUser'/>'>Моя страница</a></li>
+    </c:if>
+    <!--<sec:authorize access="hasAnyRole('ROLE_ADMIN')">
+                <li class='memberOfMenu'><a href='/springMVC_war_exploded/admin'>Администратор</a></li>
+            </sec:authorize>-->
+    <c:if test="${not isUSer}">
+        <li class='memberOfMenu'><a href="<c:url value='/user/login'/>">Войти</a></li>
+        <li class='memberOfMenu'><a href="<c:url value='/user/register'/>">Зарегистрироваться</a></li>
+    </c:if>
 </ul>
     <%
         Book book = (Book) request.getAttribute("result");
-
-
-
         out.println("<a href='book/"+book.getId() + "'><div class='book'>");
             out.println("<p class='booksAuthor'>"+book.getFullNameOfAuthor()+"</p>");
             out.println("<p class='bookName'> " + book.getName() + "</p>");
@@ -208,12 +198,9 @@
         out.println("</div></a>");
 
         out.println("<a class='button_a' href='/springMVC_war_exploded/basket/add/"+ book.getId() +"'><button class='addToBasket button'>Добавить в корзину</button></a>");
-        try {
-            if (user.getAccessCode() == 2) {
-                out.println("<a class='editBook_a ' href='/springMVC_war_exploded/admin/editBook/"+book.getId()+"'><button class='editBook button'>Изменить книгу</button></a>");
-            }
-        }
-        catch(NullPointerException e){}
+        out.println("<security:authorize access = 'hasAnyRole('ROLE_ADMIN')'>");
+        out.println("<a href='/springMVC_war_exploded/admin/editBook/"+book.getId()+"'>Изменить книгу</a>");
+        out.println("</security:authorize>");
     %>
 
 </body>

@@ -1,5 +1,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ page import="classes.User" %>
+<%@ taglib prefix="security" uri="http://www.springframework.org/security/tags" %>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
+<%@ page import="models.User" %>
 <%--
   Created by IntelliJ IDEA.
   User: Натусик
@@ -10,12 +12,28 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
-    <title>Title</title>
+    <title>Книжный магазин - Пользователь</title>
 </head>
 <body>
     <p>USER</p>
-    <a href='/springMVC_war_exploded/'>Главная</a>
-    <a href="/springMVC_war_exploded/catalog">Каталог</a>
+    <security:authorize access="hasAnyRole('ROLE_ADMIN','ROLE_SUPER_USER', 'ROLE_USER')" var= "isUSer"/>
+    <ul class='menu'>
+        <li class='memberOfMenu' id="this"><a href="<c:url value=''/>">Главная</a></li>
+        <li class='memberOfMenu'><a href="<c:url value='//catalog'/>">Каталог</a></li>
+        <li class='memberOfMenu'><a href="<c:url value='//basket/get'/>">Корзина</a></li>
+        <li class='memberOfMenu'><a href="<c:url value='/basket/orders'/>">Мои заказы</a></li>
+        <c:if test="${isUSer}">
+            <li class='memberOfMenu'><a href="<c:url value='/logout'/>">Выйти</a></li>
+            <li class='memberOfMenu'><a href='<c:url value='/user/editUser'/>'>Моя страница</a></li>
+        </c:if>
+        <!--<sec:authorize access="hasAnyRole('ROLE_ADMIN')">
+                <li class='memberOfMenu'><a href='/springMVC_war_exploded/admin'>Администратор</a></li>
+            </sec:authorize>-->
+        <c:if test="${not isUSer}">
+            <li class='memberOfMenu'><a href="<c:url value='/user/login'/>">Войти</a></li>
+            <li class='memberOfMenu'><a href="<c:url value='/user/register'/>">Зарегистрироваться</a></li>
+        </c:if>
+    </ul>
     <c:if test= "${not empty param.error}">
     <font size= "2" color= "red"><b>Неправильный логин или пароль</b></font>
     </c:if>
@@ -41,7 +59,6 @@
                     if (!session.getAttribute("user").equals(null)) {
                         User user = (User) session.getAttribute("user");
                         out.println("<a href='/springMVC_war_exploded/user/logout'>Выйти</a>");
-                        out.println("<p>Привет! Вас зовут " + user.getName() + " " + user.getFullName() + "!</p>");
                         out.println("<a href='/springMVC_war_exploded/user/editUser'>Изменить профиль</a>");
                         out.println("<a href='/springMVC_war_exploded/basket/get'>Корзина</a>");
 

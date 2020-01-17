@@ -1,21 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
-    <data-source source="LOCAL" name="Books_shop" uuid="5634714c-4610-4ea4-b895-c81482560cec">
+    <data-source source="LOCAL" name="books_shop" uuid="5634714c-4610-4ea4-b895-c81482560cec">
       <driver-ref>mysql.8</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>com.mysql.cj.jdbc.Driver</jdbc-driver>
-      <jdbc-url>jdbc:mysql://localhost:3306/Books_shop</jdbc-url>
+      <jdbc-url>jdbc:mysql://localhost:3306/books_shop</jdbc-url>
       <driver-properties>
-        <property name="autoReconnect" value="true" />
-        <property name="zeroDateTimeBehavior" value="CONVERT_TO_NULL" />
-        <property name="tinyInt1isBit" value="false" />
-        <property name="characterEncoding" value="utf8" />
-        <property name="characterSetResults" value="utf8" />
-        <property name="yearIsDateType" value="false" />
         <property name="serverTimezone" value="Europe/Saratov" />
       </driver-properties>
       <time-zone>serverTimezone=Europe/Saratov</time-zone>
+    </data-source>
+    <data-source source="LOCAL" name="my_book_shop" uuid="39f23b7c-d020-46a6-84e4-112549e6daad">
+      <driver-ref>mysql.8</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>com.mysql.cj.jdbc.Driver</jdbc-driver>
+      <jdbc-url>jdbc:mysql://localhost:3306/my_book_shop</jdbc-url>
+      <driver-properties>
+        <property name="serverTimezone" value="UTC" />
+      </driver-properties>
     </data-source>
   </component>
 </project>

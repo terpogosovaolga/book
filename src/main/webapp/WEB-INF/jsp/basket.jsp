@@ -1,11 +1,14 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+<%@ taglib prefix="security" uri="http://www.springframework.org/security/tags" %>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page import="java.util.Map" %>
-<%@ page import="classes.Basket" %>
-<%@ page import="classes.BasketParagraph" %>
+<%@ page import="models.Basket" %>
+<%@ page import="models.BasketParagraph" %>
 <%@ page import="java.util.List" %>
-<%@ page import="classes.BasketParagraphBooked" %>
+<%@ page import="models.BasketParagraphBooked" %>
 <%@ page import="com.test.pluto.BookController" %>
-<%@ page import="classes.User" %>
+<%@ page import="models.User" %>
 <%--
   Created by IntelliJ IDEA.
   User: Натусик
@@ -177,31 +180,23 @@
     </style>
 </head>
 <body>
+<security:authorize access="hasAnyRole('ROLE_ADMIN','ROLE_SUPER_USER', 'ROLE_USER')" var= "isUSer"/>
 <ul class='menu'>
-    <%
-        User user = (User) session.getAttribute("user");
-        try {
-            if (!user.equals(null)) {
-                out.println("<li class='memberOfMenu'><a href='/springMVC_war_exploded/user/logout'>Выйти</a></li>");
-                out.println("<li class='memberOfMenu'><a href='/springMVC_war_exploded/user'>Моя страница</a></li>");
-                out.println("<li class='memberOfMenu'><a href='/springMVC_war_exploded/basket/orders'>Мои заказы</a><li>");
-                if (user.getAccessCode()==2) // ЕСЛИ ЭТО АДМИН
-                {
-                    out.println("<li class='memberOfMenu'><a href='/springMVC_war_exploded/admin/addBook'>ДОБАВИТЬ КНИГУ</a></li>");
-                    out.println("<li class='memberOfMenu'><a href='/springMVC_war_exploded/user/addAdmin'>ДОБАВИТЬ АДМИНИСТРАТОРА</a></li>");
-                }
-            }
-        }
-        catch(NullPointerException np)
-        {
-            User anon = (User) session.getAttribute("anonId");
-            out.println("<li class='memberOfMenu'><a href='/springMVC_war_exploded/user/login'>Войти</a></li>");
-            out.println("<li class='memberOfMenu'><a href='/springMVC_war_exploded/user/register'>Зарегистрироваться</a></li>");
-        }
-    %>
-
-    <li class='memberOfMenu'><a href="/springMVC_war_exploded/catalog">Каталог</a></li>
-    <li class='memberOfMenu'><a href='/springMVC_war_exploded/basket/orders'>Мои заказы</a><li>
+    <li class='memberOfMenu'><a href="<c:url value=''/>">Главная</a></li>
+    <li class='memberOfMenu'><a href="<c:url value='//catalog'/>">Каталог</a></li>
+    <li class='memberOfMenu' id="this"><a href="<c:url value='//basket/get'/>">Корзина</a></li>
+    <li class='memberOfMenu'><a href="<c:url value='/basket/orders'/>">Мои заказы</a></li>
+    <c:if test="${isUSer}">
+        <li class='memberOfMenu'><a href="<c:url value='/logout'/>">Выйти</a></li>
+        <li class='memberOfMenu'><a href='<c:url value='/user/editUser'/>'>Моя страница</a></li>
+    </c:if>
+    <!--<sec:authorize access="hasAnyRole('ROLE_ADMIN')">
+                <li class='memberOfMenu'><a href='/springMVC_war_exploded/admin'>Администратор</a></li>
+            </sec:authorize>-->
+    <c:if test="${not isUSer}">
+        <li class='memberOfMenu'><a href="<c:url value='/user/login'/>">Войти</a></li>
+        <li class='memberOfMenu'><a href="<c:url value='/user/register'/>">Зарегистрироваться</a></li>
+    </c:if>
 </ul>
 <%
     Map<String , Object> map = (Map<String , Object>) request.getAttribute("allBasket");

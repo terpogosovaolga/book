@@ -1,22 +1,17 @@
 package Dao;
 
-import classes.Basket;
-import org.springframework.dao.EmptyResultDataAccessException;
+import Hibernate.HibernateSessionFactory;
+import models.Basket;
+import org.hibernate.Query;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 @Component
 public class BasketDao implements IBasketDao {
-
-    RowMapper<Basket> mapper = (resultSet, rowNum) -> new Basket(resultSet.getLong("Basket_id"),
-            resultSet.getLong("User_id"),
-            resultSet.getDouble("Cost"),
-            resultSet.getDate("Date_of_purchase"),
-            resultSet.getBoolean("Delievered"));
 
     private final JdbcTemplate jdbcTemplate;
 
@@ -26,10 +21,80 @@ public class BasketDao implements IBasketDao {
 
 
     @Override
-    public List<Basket> getAllBaskets() {return null;
+    public List<Basket> getAllBaskets() {
+        List<Basket> baskets = (List<Basket>)  HibernateSessionFactory.getSessionFactory().openSession().createQuery("From Basket").list();
+        return baskets;
     }
 
     @Override
+    public void delete(Basket basket) {
+        Session session = HibernateSessionFactory.getSessionFactory().openSession();
+        Transaction tx1 = session.beginTransaction();
+        session.delete(basket);
+        tx1.commit();
+        session.close();
+    }
+
+    @Override
+    public Basket getBasketByUserId(long userId) {
+        Session session = HibernateSessionFactory.getSessionFactory().openSession();
+        Transaction tx1 = session.beginTransaction();
+        Query query = session.createQuery("From Basket where userId =: userId and dateOfSale is null");
+        query.setParameter("userId", userId);
+        Basket basket = (Basket) query.uniqueResult();
+        tx1.commit();
+        session.close();
+        return basket;
+    }
+
+    @Override
+    public List<Basket> getOrdersByUserId(long userId) {
+        Session session = HibernateSessionFactory.getSessionFactory().openSession();
+        Transaction tx = session.beginTransaction();
+        Query query = session.createQuery("from Basket where userId = :userId and dateOfSale is not null");
+        query.setParameter("userId", userId);
+        List<Basket> orders = query.list();
+        tx.commit();
+        session.close();
+        return orders;
+    }
+
+    @Override
+    public void save(Basket basket) {
+        Session session = HibernateSessionFactory.getSessionFactory().openSession();
+        Transaction tx1 = session.beginTransaction();
+        session.save(basket);
+        tx1.commit();
+        session.close();
+    }
+
+    @Override
+    public void update(Basket basket) {
+        Session session = HibernateSessionFactory.getSessionFactory().openSession();
+        Transaction tx1 = session.beginTransaction();
+        session.update(basket);
+        tx1.commit();
+        session.close();
+    }
+
+    @Override
+    public void setDateOfPurchase(Basket basket, Date date) {
+        Session session = HibernateSessionFactory.getSessionFactory().openSession();
+        Transaction tx = session.beginTransaction();
+        Query query = session.createQuery("update Basket set DateOfSale = :date where basketId = :basketId");
+        query.setParameter("date", date);
+        query.setParameter("basketId", basket.getId());
+        query.executeUpdate();
+        tx.commit();
+        session.close();
+    }
+
+    @Override
+    public Basket getBasketByBasketId(Long basketId) {
+        return  HibernateSessionFactory.getSessionFactory().openSession().get(Basket.class, basketId);
+    }
+
+  /*  @Override
     public Basket getBasketByUserId(Long id) {
 
         Basket basket;
@@ -70,16 +135,6 @@ public class BasketDao implements IBasketDao {
         jdbcTemplate.update("update Baskets set Cost=? where Basket_id=?", new Object[]{newCost, basketId});
     }
 
-    @Override
-    public void cleanBasket(Long id) {
-        jdbcTemplate.update("delete from Baskets where  Basket_id=?", new Object[]{id});
-    }
-
-    @Override
-    public void createBasket(Long id) {
-       jdbcTemplate.update("insert into Baskets (User_id) values(?)", new Object[]{id});
-
-    }
 
     @Override
     public void setDateOfPurchase(Long id, Date time) {
@@ -91,4 +146,5 @@ public class BasketDao implements IBasketDao {
         return jdbcTemplate.queryForObject("select * from Baskets where Basket_id=? and Date_of_purchase is null", new Object[]{basketId}, mapper);
 
     }
+   */
 }

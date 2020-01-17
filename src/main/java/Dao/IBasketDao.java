@@ -1,25 +1,34 @@
 package Dao;
 
-import classes.Basket;
+import models.Basket;
 
 import java.util.Date;
 import java.util.List;
 
-public interface IBasketDao { // вытаскивает корзины из бд
-    List<Basket> getAllBaskets();
+public interface IBasketDao {
 
-    Basket getBasketByUserId(Long id);
+    List<Basket> getAllBaskets(); //returns all baskets and orders of all users from database               SELECT
 
-    List<Basket> getOrdersByUserId(Long id);
+    Basket getBasketByBasketId(Long basketId); //returns the only one basket with this id from database     SELECT
 
-    void updateCostOfBasket(Long userId, Double newCost);
+    void save(Basket basket);  // adds a basket in database                                                 INSERT
 
-    void cleanBasket(Long id);
+    void update(Basket basket);   // updates a basket in database                                           UPDATE
+
+    void setDateOfPurchase(Basket basket, Date date); //makes basket into order making dateOfSale not null  UPDATE
+
+    void delete(Basket basket);   //deletes this basket from database                                       DELETE
+
+    Basket getBasketByUserId(long userId); //returns the only one basket of user with this id               SELECT
+
+    List<Basket> getOrdersByUserId(long userId); //returns orders of this user (date of purchase != null)   SELECT
+
+   // List<Basket> getOrdersByUserId(Long id);
+
+   // void updateCostOfBasket(Long userId, Double newCost);
 
 
-    void createBasket(Long id);
 
-    void setDateOfPurchase(Long id, Date time);
+   // void setDateOfPurchase(Long id, Date time);
 
-    Basket getBasketByBasketId(Long basketId);
 }
