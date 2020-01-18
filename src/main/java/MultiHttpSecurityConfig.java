@@ -35,6 +35,7 @@ public class MultiHttpSecurityConfig {
             http
                     .formLogin()
                     .loginPage("/login")
+                    .defaultSuccessUrl("/")
                     .permitAll()
                     .and()
                     .logout()
@@ -42,8 +43,10 @@ public class MultiHttpSecurityConfig {
                     .permitAll()
                     .and()
                     .authorizeRequests()
-                    .antMatchers("/admin")
+                    .antMatchers("/admin/**")
                     .access("hasRole('ADMIN')")
+                    .antMatchers("/book/**", "/basket/**", "catalog/**", "/user/**, /login**, /**")
+                    .access("hasAnyRole('ROLE_USER' ,'ROLE_ADMIN', 'ROLE_ANONYMOUS')")
                     .and()
                     .csrf().disable()
                     .httpBasic();

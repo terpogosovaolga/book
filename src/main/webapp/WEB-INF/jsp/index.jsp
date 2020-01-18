@@ -31,18 +31,17 @@
     </head>
     <body>
         <security:authorize access="hasAnyRole('ROLE_ADMIN','ROLE_SUPER_USER', 'ROLE_USER')" var= "isUSer"/>
+        <security:authorize access="hasAnyRole('ROLE_ADMIN')" var= "isADmin"/>
+        <p>${auth.toString()}</p>
         <header class="header-section">
             <div class="header-top">
                 <div class="container">
                     <div class="row">
                         <div class="col-lg-2 text-center text-lg-left">
-                            <a href="<c:url value=''/>" class="site-logo">
-                                <img src="C:\Users\olyao\IdeaProjects\logo.png" alt="">
-                            </a>
                         </div>
                         <div class="col-xl-6 col-lg-5">
-                            <form class="header-search-form">
-                                <input type="text" placeholder="Поиск в Книжном магазине...">
+                            <form class="header-search-form" id='search' method='get' class="search">
+                                <input type="search" class="searchString" id='valueOfSearch' onkeyup="editLinksSearch(this.value)" name="q" placeholder="Поиск в Книжном магазине...">
                             </form>
                         </div>
                         <div class="col-xl-4 col-lg-5">
@@ -56,10 +55,6 @@
                                     </c:if>
                                 </div>
                                 <div class="up-item">
-                                    <div class="shopping-card">
-                                        <i class="flaticon-bag"></i>
-                                        <span>0</span>
-                                    </div>
                                     <a href="<c:url value='/basket'/>">Корзина</a>
                                 </div>
                             </div>
@@ -72,57 +67,14 @@
                     <ul class="main-menu">
                         <li><a href="<c:url value=''/>">Главная</a></li>
                         <li><a href="<c:url value='//catalog'/>">Каталог</a></li>
-                        <c:if test="${isUSer}">
-                            <li><a href="<c:url value='//user'/>">Моя страница</a></li>
-                        </c:if>
                         <li><a href="<c:url value='/basket/orders'/>">Мои заказы</a></li>
-                    </ul>
+                        <c:if test="${isADmin}">
+                            <li><a href="<c:url value='//user'/>">Кабинет администратора</a></li>
+                        </c:if>
+                   </ul>
                 </div>
             </nav>
         </header>
-        <!--<section class="hero-section">
-             <div class="hero-slider owl-carousel">
-                 <div class="hs-item set-bg" data-setbg="C:\Users\olyao\IdeaProjects\myata.jpg">
-                      <div class="container">
-                            <div class="row">
-                                <div class="col-xl-6 col-lg-7 text-white">
-                                    <span>Новинка</span>
-                                    <h2>Мятная сказка</h2>
-                                    <p>Бестселлер российской современной литературы</p>
-                                    <a href="#" class="site-btn sb-line">Просмотр</a>
-                                    <a href="#" class="site-btn sb-white">Добавить в корзину</a>
-                                </div>
-                            </div>
-                            <div class="offer-card text-white">
-                                <span>всего</span>
-                                <h2>490Р</h2>
-                                <p>КУПИТЬ СЕЙЧАС</p>
-                            </div>
-                       </div>
-                 </div>
-                 <div class="hs-item set-bg" data-setbg="C:\Users\olyao\IdeaProjects\running.jpg">
-                       <div class="container">
-                            <div class="row">
-                                 <div class="col-xl-6 col-lg-7 text-white">
-                                     <span>Новинка</span>
-                                     <h2>Бегущий за ветром</h2>
-                                     <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Quis ipsum sus-pendisse ultrices gravida. Risus commodo viverra maecenas accumsan lacus vel facilisis. </p>
-                                     <a href="#" class="site-btn sb-line">Просмотр</a>
-                                     <a href="#" class="site-btn sb-white">Добавить в корзину</a>
-                                 </div>
-                            </div>
-                            <div class="offer-card text-white">
-                                <span>всего</span>
-                                <h2>490Р</h2>
-                                <p>КУПИТЬ СЕЙЧАС</p>
-                            </div>
-                       </div>
-                 </div>
-             </div>
-             <div class="container">
-                 <div class="slide-num-holder" id="snh-1"></div>
-             </div>
-         </section>-->
          <section class="top-letest-product-section">
                             <div class="container">
                                 <div class="section-title">
@@ -140,8 +92,11 @@
                                                 "<p>" +b.getDescription()+ "</p>\n"+
                                             "</div>\n" +
                                             "<div class='pi-links'>\n" +
-                                                "<a class='addbasket' style='color: #f51167' href='basket/add/"+b.getId()+"'/>Добавить в корзину</a>\n" +
-                                                "</br><a class='addbasket' style='color: #f51167' href='book/edit/"+b.getId()+"'/>Изменить книгу</a>\n" +
+                                                "<a class='addbasket' href='basket/add/"+b.getId()+"'/>Добавить в корзину</a>\n" +
+                                                "<security:authorize access=\"hasRole('ROLE_ADMIN')\">" +
+                                                    "</br><a class='addbasket' href='book/edit/"+b.getId()+"'/>Изменить книгу</a>\n" +
+                                                    "</br><a class='addbasket' href='book/delete/"+b.getId()+"'/>Удалить книгу</a>\n" +
+                                                "</security:authorize>" +
                                              "</div>\n" +
                                             "<div class='pi-text'>\n" +
                                                 "<h6 class='price'>"+b.getCout()+"</h6>\n" +
@@ -163,15 +118,16 @@
                                 if(newArrivals.size()!=0) {
                                     for (Book b : newArrivals)
                                     {
-
                                         out.println("<div class='product-item'>");
                                         out.println("<div class='pi-pic'>\n" +
                                                 "<span>" + b.getFullNameOfAuthor() + "</span>\n" +
-                                                "<h2>" + b.getName() + "</h2>\n" +
+                                                "<h2 class='bookname'>" + b.getName() + "</h2>\n" +
                                                 "<p>" +b.getDescription()+ "</p>\n"+
                                                 "</div>\n" +
                                                 "<div class='pi-links'>\n" +
-                                                "<a href='basket/add/"+b.getId()+"'/>Добавить в корзину</a>\n" +
+                                                "<a class='addbasket' href='basket/add/"+b.getId()+"'/>Добавить в корзину</a>\n" +
+                                                "</br><a class='addbasket' href='book/edit/"+b.getId()+"'/>Изменить книгу</a>\n" +
+                                                "</br><a class='addbasket' href='book/delete/"+b.getId()+"'/>Удалить книгу</a>\n" +
                                                 "</div>\n" +
                                                 "<div class='pi-text'>\n" +
                                                 "<h6 class='price'>"+b.getCout()+"</h6>\n" +
@@ -192,19 +148,19 @@
                                 if(poems.size()!=0) {
                                     for (Book b : poems)
                                     {
-
                                         out.println("<div class='product-item'>");
                                         out.println("<div class='pi-pic'>\n" +
                                                 "<span>" + b.getFullNameOfAuthor() + "</span>\n" +
-                                                "<h2>" + b.getName() + "</h2>\n" +
+                                                "<h2 class='bookname'>" + b.getName() + "</h2>\n" +
                                                 "<p>" +b.getDescription()+ "</p>\n"+
                                                 "</div>\n" +
                                                 "<div class='pi-links'>\n" +
-                                                "<a href='<c:url value='basket/add/"+b.getId()+"'/>' class='add-card'><i class='flaticon-bag'></i><span>Добавить в корзину</span></a>\n" +
-                                                "<a href='<c:url value='basket/add/"+b.getId()+"'/>' class='wishlist-btn'><i class='flaticon-heart'></i></a>\n" +
+                                                "<a class='addbasket' href='basket/add/"+b.getId()+"'/>Добавить в корзину</a>\n" +
+                                                "</br><a class='addbasket' href='book/edit/"+b.getId()+"'/>Изменить книгу</a>\n" +
+                                                "</br><a class='addbasket' href='book/delete/"+b.getId()+"'/>Удалить книгу</a>\n" +
                                                 "</div>\n" +
                                                 "<div class='pi-text'>\n" +
-                                                "<h6>"+b.getCout()+"</h6>\n" +
+                                                "<h6 class='price'>"+b.getCout()+"</h6>\n" +
                                                 "</div>\n"+
                                                 "</div>\n");
                                     }
@@ -225,15 +181,16 @@
                                         out.println("<div class='product-item'>");
                                         out.println("<div class='pi-pic'>\n" +
                                                 "<span>" + b.getFullNameOfAuthor() + "</span>\n" +
-                                                "<h2>" + b.getName() + "</h2>\n" +
+                                                "<h2 class='bookname'>" + b.getName() + "</h2>\n" +
                                                 "<p>" +b.getDescription()+ "</p>\n"+
                                                 "</div>\n" +
                                                 "<div class='pi-links'>\n" +
-                                                "<a href='<c:url value='basket/add/"+b.getId()+"'/>' class='add-card'><i class='flaticon-bag'></i><span>Добавить в корзину</span></a>\n" +
-                                                "<a href='<c:url value='basket/add/"+b.getId()+"'/>' class='wishlist-btn'><i class='flaticon-heart'></i></a>\n" +
+                                                "<a class='addbasket' href='basket/add/"+b.getId()+"'/>Добавить в корзину</a>\n" +
+                                                "</br><a class='addbasket' href='book/edit/"+b.getId()+"'/>Изменить книгу</a>\n" +
+                                                "</br><a class='addbasket' href='book/delete/"+b.getId()+"'/>Удалить книгу</a>\n" +
                                                 "</div>\n" +
                                                 "<div class='pi-text'>\n" +
-                                                "<h6>"+b.getCout()+"</h6>\n" +
+                                                "<h6 class='price'>"+b.getCout()+"</h6>\n" +
                                                 "</div>\n"+
                                                 "</div>\n");
                                     }
@@ -250,19 +207,19 @@
                                 if(smalls.size()!=0) {
                                     for (Book b : smalls)
                                     {
-
-                                        out.println("<div class='product-item'");
+                                        out.println("<div class='product-item'>");
                                         out.println("<div class='pi-pic'>\n" +
                                                 "<span>" + b.getFullNameOfAuthor() + "</span>\n" +
-                                                "<h2>" + b.getName() + "</h2>\n" +
+                                                "<h2 class='bookname'>" + b.getName() + "</h2>\n" +
                                                 "<p>" +b.getDescription()+ "</p>\n"+
                                                 "</div>\n" +
                                                 "<div class='pi-links'>\n" +
-                                                "<a href='<c:url value='basket/add/"+b.getId()+"'/>' class='add-card'><i class='flaticon-bag'></i><span>Добавить в корзину</span></a>\n" +
-                                                "<a href='<c:url value='basket/add/"+b.getId()+"'/>' class='wishlist-btn'><i class='flaticon-heart'></i></a>\n" +
+                                                "<a class='addbasket' href='basket/add/"+b.getId()+"'/>Добавить в корзину</a>\n" +
+                                                "</br><a class='addbasket' href='book/edit/"+b.getId()+"'/>Изменить книгу</a>\n" +
+                                                "</br><a class='addbasket' href='book/delete/"+b.getId()+"'/>Удалить книгу</a>\n" +
                                                 "</div>\n" +
                                                 "<div class='pi-text'>\n" +
-                                                "<h6>"+b.getCout()+"</h6>\n" +
+                                                "<h6 class='price'>"+b.getCout()+"</h6>\n" +
                                                 "</div>\n"+
                                                 "</div>\n");
                                     }
@@ -280,23 +237,30 @@
                                 if(tolstoy.size()!=0) {
                                     for (Book b : tolstoy)
                                     {
-
-                                        out.println("<div class='product-item' onclick='click_book("+b.getId()+")'>");
+                                        out.println("<div class='product-item'>");
                                         out.println("<div class='pi-pic'>\n" +
                                                 "<span>" + b.getFullNameOfAuthor() + "</span>\n" +
-                                                "<h2>" + b.getName() + "</h2>\n" +
+                                                "<h2 class='bookname'>" + b.getName() + "</h2>\n" +
                                                 "<p>" +b.getDescription()+ "</p>\n"+
                                                 "</div>\n" +
                                                 "<div class='pi-links'>\n" +
-                                                "<a href='<c:url value='basket/add/"+b.getId()+"'/>' class='add-card'><i class='flaticon-bag'></i><span>Добавить в корзину</span></a>\n" +
-                                                "<a href='<c:url value='basket/add/"+b.getId()+"'/>' class='wishlist-btn'><i class='flaticon-heart'></i></a>\n" +
+                                                "<a class='addbasket' href='basket/add/"+b.getId()+"'/>Добавить в корзину</a>\n" +
+                                                "</br><a class='addbasket' href='book/edit/"+b.getId()+"'/>Изменить книгу</a>\n" +
+                                                "</br><a class='addbasket' href='book/delete/"+b.getId()+"'/>Удалить книгу</a>\n" +
                                                 "</div>\n" +
                                                 "<div class='pi-text'>\n" +
-                                                "<h6>"+b.getCout()+"</h6>\n" +
+                                                "<h6 class='price'>"+b.getCout()+"</h6>\n" +
                                                 "</div>\n"+
                                                 "</div>\n");
                                     }
                                 }%>
                             </div></div></section>
+
+        <script>
+            function editLinksSearch(searchvalue){
+                var form = document.forms.search;
+                form.action = "/springMVC_war_exploded/search/"+searchvalue;
+            }
+        </script>
 </body>
 </html>

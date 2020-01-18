@@ -213,7 +213,8 @@ public class Book  implements Serializable {
     }
 
     public String getLanguage() {
-        return language;
+        if (language==null) return originalLanguage;
+        else return language;
     }
 
     @ModelAttribute("language")

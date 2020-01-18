@@ -30,7 +30,9 @@ public interface IBookService {
 
     List<Book> getBooksOfAuthor(String surname, String name);
 
-   // public List<Book> getBooksWithParams(Map<String, String> attrs);
+    Object getBooksAfterSearch(String search);
+
+    // public List<Book> getBooksWithParams(Map<String, String> attrs);
    // public List<Book> getBooksAfterSearch(String search);
    // public List<Book> getPopularBooks();
    // List<Book> getNewArrivals();

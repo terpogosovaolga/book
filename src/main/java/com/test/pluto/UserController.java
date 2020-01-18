@@ -5,6 +5,7 @@ import Services.IUserService;
 import Services.SecurityService;
 import models.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
@@ -51,7 +52,7 @@ public class UserController {
         return "user";
     }
 
-    @RequestMapping(value = "/login", method = RequestMethod.GET)
+    @RequestMapping(value = "/login", method = {RequestMethod.GET})
     public String login(Model model, String error, String logout) {
         if (error != null) {
             model.addAttribute("error", "Username or password is incorrect.");
@@ -62,6 +63,11 @@ public class UserController {
         }
 
         return "new_login";
+    }
+
+    @RequestMapping(value="/login", method =RequestMethod.POST)
+    public String login() {
+        return "index";
     }
 
     @RequestMapping(value = "/register", method = RequestMethod.GET)

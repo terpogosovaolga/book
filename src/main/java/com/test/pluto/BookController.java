@@ -12,6 +12,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.annotation.security.RolesAllowed;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Controller("/")
@@ -44,22 +45,6 @@ public class BookController {
         return new ModelAndView("index", "models", models);
 
     }
-/*
-    @GetMapping(value = "/search/{nameOfParam}/{valueOfParam}")  // доступен со страницы каталога
-    @ResponseBody
-    public ModelAndView getBooksWithParams(HttpSession session, @PathVariable("nameOfParam") String key, @PathVariable("valueOfParam") String value) throws Exception {
-        addSearchParamsInSession(session, key, value);
-        List<Book> booksFromDao = myBook.getBooksWithParams((Map<String, String>) session.getAttribute("params"));
-        System.out.println("WE GOT " + booksFromDao.size() + " BOOKS");
-        return new ModelAndView("catalog", "result", booksFromDao);
-    }*/
-/*
-    @GetMapping(value="/search/author/{surname}/{name}")
-    @ResponseBody
-    public ModelAndView getBooksOfAuthor(HttpSession session, @PathVariable("surname") String surname, @PathVariable("name") String name) {
-        return new ModelAndView("catalog", "result", myBook.getBooksOfAuthor(name, surname));
-    }
-*/
    /* @RequestMapping(value = "/deleteParam/{nameOfParam}", method={RequestMethod.GET})  // доступен со страницы каталога
     public ModelAndView removeParam(HttpSession session, @PathVariable("nameOfParam") String key) throws Exception {
         Map<String, String> map = (Map<String, String>) session.getAttribute("params");
@@ -89,24 +74,27 @@ public class BookController {
         return new ModelAndView("catalog", "result", booksFromDao);
     }*/
 
-
-/*
     @GetMapping(value = "/search/{search}") //доступен со всех страниц
     @ResponseBody
     public ModelAndView getBooksAfterSearch(@PathVariable("search") String search) throws Exception {
         System.out.println("you are in search-method!!!!!");
         return  new ModelAndView("catalog", "result", myBook.getBooksAfterSearch(search));   // выкидывает на страницу главного каталога с результатами поиска
-    }*/
+    }
 
     @GetMapping(value = "/book/{id}") //доступен со всех страниц, с которых можно выбрать книгу
     @ResponseBody
     public ModelAndView getBookById(@PathVariable("id") Long id) throws Exception { // returns sessionId
 
-        System.out.println(id);
         Book book = myBook.getBookById(id);
         ModelAndView model = new ModelAndView("book", "result", book);
         myBook.view(book);
         return model;   // выкидывает на страницу выбранной книги
+    }
+
+    @GetMapping(value="/catalog/{nameParametr}/{valueParametr}")
+    @ResponseBody
+    public ModelAndView getBooksAfterSearchWithParams(@PathVariable String valueParametr, @PathVariable String nameParametr) {
+
     }
 
     @GetMapping(value = "/catalog") //выполняется при переходе на каталог

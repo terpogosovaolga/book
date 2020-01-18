@@ -13,55 +13,6 @@
 <html>
 <head>
     <title>Title</title>
-    <style>
-        body {
-            background-color: #e9e8fa;
-        }
-        .memberOfMenu {
-            display: inline-block;
-            width: 24%;
-            font-color: black;
-            font-size: 20px;
-            align: center;
-            margin-top: 10px;
-            margin-bottom: 10px;
-            height: 100%;
-
-        }
-        .memberOfMenu:hover {
-            background: #1b1899;
-        }
-        .menu {
-            background-color: #615fd4;
-            height: 100px;
-            width: 100%;
-            display: flex;
-            justify-content: space-between;
-        }
-        .memberOfMenu a {
-            color: white;
-            text-decoration: none;
-            align: center;
-        }
-        .form {
-            padding: 5px;
-        }
-        .form input{
-            width: 400px;
-            height: 35px;
-            font-size: 15px;
-
-        }
-        .form button {
-            background-color: #4845ff;
-            font-color: white;
-            font-size: 20px;
-            padding: 5px;
-        }
-        .form button:hover {
-            background-color: #1b1899;
-        }
-    </style>
 </head>
 <body>
 <ul class='menu'>

@@ -7,6 +7,7 @@ import models.Book;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -94,6 +95,32 @@ public class BookService implements IBookService {
     @Override
     public List<Book> getBooksOfAuthor(String surname, String name) {
         return bookDao.getBooksOfAuthor(surname, name);
+    }
+
+    @Override
+    public List<Book> getBooksAfterSearch(String search) {
+        List<Book> allBooks = bookDao.getAllBooks();
+        List<Book> result = new ArrayList<>();
+        for (Book b : allBooks)
+        {
+            if (b.getFullNameOfAuthor().contains(search)) {
+                result.add(b);
+            }
+            else if (b.getName().contains(search)){
+                result.add(b);
+            }
+            else if (b.getDescription().contains(search)) {
+                result.add(b);
+            }
+            else if (b.getGenre().contains(search))
+            {
+                result.add(b);
+            }
+            else if (b.getPublisher().contains(search)) {
+                result.add(b);
+            }
+        }
+        return result;
     }
 /*
 

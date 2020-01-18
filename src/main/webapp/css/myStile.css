@@ -17,10 +17,42 @@
 }
 .addbasket {
     color: #f51167; !important;
-
 }
 .addbasket:hover {
-    color: #282828; !important;
+    color: #850134; !important;
+}
+.searchParams_component {
+    display: inline-block;
+    width: 24%;
+
+}
+.category {
+    color: #f51167; !important;
+    font-size: 30px;
+    font-family: 'Cormorant Unicase', serif;
+}
+.searchParams_component_a {
+    display: inline-block;
+    padding: 3px;
+}
+
+.searchParams_component_a a {
+    color: #282828;
+}
+.searchParams_component_a a:hover {
+    color: black;
+}
+.searchParams {
+    background: #DFDFDF;
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
+.product-filter-menu li a:hover {
+    background: #CCCCCC;
+}
+.attributes {
+    padding-bottom: 5px;
 }
 /*
 .pi-text {
