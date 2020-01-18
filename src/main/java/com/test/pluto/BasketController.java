@@ -179,6 +179,7 @@ public class BasketController {
         ModelAndView model = new ModelAndView("order");
         Map<String, Object> map = new HashMap<>();
         User user = myUser.getUserByEmail(principal.getName());
+        System.out.println(user.toString());
         List<Basket> orders = myBasket.getOrdersByUserId(user.getId());
         map.put("orders", orders);
         List<BasketParagraph> bps = new ArrayList<>();

@@ -4,13 +4,16 @@ import Services.IBasketParagraphService;
 import Services.IBasketService;
 import Services.IBookService;
 import Services.IUserService;
+import classes.Attribute;
 import models.Book;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
+import org.w3c.dom.Attr;
 
 import javax.annotation.security.RolesAllowed;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,6 +26,7 @@ public class BookController {
     private final IUserService myUser;
     private final IBasketParagraphService myBp;
     private final IBasketService myBasket;
+    private List<Attribute> attrs = new ArrayList<>();
 
     public BookController(IBookService myBook, IUserService myUser, IBasketParagraphService myBp, IBasketService myBasket) {
         this.myBook = myBook;
@@ -91,10 +95,32 @@ public class BookController {
         return model;   // выкидывает на страницу выбранной книги
     }
 
-    @GetMapping(value="/catalog/{nameParametr}/{valueParametr}")
+    @GetMapping(value="/catalog/search/{nameParametr}/{valueParametr}")
     @ResponseBody
-    public ModelAndView getBooksAfterSearchWithParams(@PathVariable String valueParametr, @PathVariable String nameParametr) {
-
+    public ModelAndView getBooksAfterSearchWithParams(@PathVariable String valueParametr, @PathVariable String nameParametr) throws Exception {
+        Attribute newAttr = new Attribute(nameParametr, valueParametr);
+        System.out.println(newAttr.toString());
+        if (attrs.contains(newAttr)){
+            Attribute delete = null;
+            for (Attribute a : attrs) {
+                if (a.equals(newAttr)){
+                    delete = a;
+                    System.out.println("this attribute was deleted coz it has already been in out list");
+                }
+            }
+            attrs.remove(delete);
+        }
+        else attrs.add(newAttr);
+        System.out.println("count of attrs now: " + attrs.size());
+        if (attrs.size()!=0) {
+            ModelAndView model = new ModelAndView("catalog");
+            Map<String, Object> map = new HashMap<>();
+            map.put("result", myBook.getBooksAfterSearchWithParams(attrs));
+            map.put("attrs", attrs);
+            model.addAllObjects(map);
+            return model;
+        }
+        return getAllBooks();
     }
 
     @GetMapping(value = "/catalog") //выполняется при переходе на каталог

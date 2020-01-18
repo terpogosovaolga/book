@@ -2,6 +2,7 @@ package Services;
 
 import Dao.IBasketParagraphDao;
 import Dao.IBookDao;
+import classes.Attribute;
 import models.BasketParagraph;
 import models.Book;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -121,6 +122,11 @@ public class BookService implements IBookService {
             }
         }
         return result;
+    }
+
+    @Override
+    public List<Book> getBooksAfterSearchWithParams(List<Attribute> attrs) {
+        return bookDao.getBooksAfterSearchWithParams(attrs);
     }
 /*
 

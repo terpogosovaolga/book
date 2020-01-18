@@ -4,9 +4,6 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core_1_1" %>
 <%@ page import="models.Book" %>
 <%@ page import="java.util.List" %>
-<%@ page import="java.util.Map" %>
-<%@ page import="java.security.Key" %>
-<%@ page import="models.User" %>
 <%--
   Created by IntelliJ IDEA.
   User: Натусик
@@ -81,28 +78,15 @@
         </div>
     </nav>
 </header>
-
-<%
-    Map<String, String> pastParams = (Map<String, String>) session.getAttribute("params");
-    try {
-        for (String k : pastParams.keySet()) {
-            out.println("<div class='pastParams'><a href='/springMVC_war_exploded/deleteParam/"+k+"'>" + pastParams.get(k) +"</a></div>");
-        }
-    }
-    catch(NullPointerException e){
-
-    }
-%>
-
 <section class="top-letest-product-section">
     <div class="container">
         <ul class="product-filter-menu">
-            <li><a href="<c:url value='/search/genre/novel'/>">РОМАНЫ</a></li>
-            <li><a href="<c:url value='/search/genre/poem'/>">ПОЭЗИЯ</a></li>
-            <li><a href="<c:url value='/search/genre/detective'/>">ДЕТЕКТИВЫ</a></li>
-            <li><a href="<c:url value='/search/genre/tale'/>">СКАЗКИ</a></li>
-            <li><a href="<c:url value='/search/cout/300'/>">НЕ ДОРОЖЕ 300</a></li>
-            <li><a href="<c:url value='/search/cout/800'/>">НЕ ДОРОЖЕ 800</a></li>
+                <li><a href ='/book_war_exploded//catalog/search/genre/novel'> РОМАНЫ </a></li>
+                <li><a href='/book_war_exploded//catalog/search/genre/poem'>ПОЭЗИЯ</a></li>
+                <li><a href='/book_war_exploded//catalog/search/genre/detective'>ДЕТЕКТИВЫ</a></li>
+                <li><a href='/book_war_exploded//catalog/search/genre/tale'>СКАЗКИ</a></li>
+                <li><a href='/book_war_exploded//catalog/search/cout/300'>НЕ ДОРОЖЕ 300</a></li>
+                <li><a href='/book_war_exploded//catalog/search/cout/800'>НЕ ДОРОЖЕ 800</a></li>
         </ul>
 
 <%
@@ -146,32 +130,5 @@
         var form = document.forms.search;
             form.action = "/springMVC_war_exploded/search/"+searchvalue;
     }
-
-    /*function editLinksWithParams() {
-        var form = document.forms.searchWithParams;
-         ОБРАБОТКА КОЛ-ВА СТРАНИЦ
-        var minNumberOfPages = 0;
-        var maxNumberOfPages = -1;
-            if (more700==true)
-                maxNumberOfPages = -1;
-            else if (less700==true)
-                maxNumberOfPages = 700;
-            else if (less300==true)
-                maxNumberOfPages = 300;
-            else if (less100==true)
-                maxNumberOfPages = 100;
-
-            if (less100 == true)
-                minNumberOfPages = 0;
-            else if (less300 == true)
-                minNumberOfPages = 100;
-            else if (less700 == true)
-                minNumberOfPages = 300;
-            else if (more700 == true)
-                minNumberOfPages = 700;
-        /* ОБРАБОТКА ЖАНРА
-        var genres = [];
-
-    }*/
 </script>
 </html>

@@ -1,5 +1,6 @@
 package Services;
 
+import classes.Attribute;
 import models.Book;
 
 import java.util.List;
@@ -30,7 +31,9 @@ public interface IBookService {
 
     List<Book> getBooksOfAuthor(String surname, String name);
 
-    Object getBooksAfterSearch(String search);
+    List<Book> getBooksAfterSearch(String search);
+
+    List<Book> getBooksAfterSearchWithParams(List<Attribute> attrs);
 
     // public List<Book> getBooksWithParams(Map<String, String> attrs);
    // public List<Book> getBooksAfterSearch(String search);

@@ -45,8 +45,10 @@ public class MultiHttpSecurityConfig {
                     .authorizeRequests()
                     .antMatchers("/admin/**")
                     .access("hasRole('ADMIN')")
-                    .antMatchers("/book/**", "/basket/**", "catalog/**", "/user/**, /login**, /**")
+                    .antMatchers("/book/**", "/basket/**", "catalog/**", "/user, /login**, /**")
                     .access("hasAnyRole('ROLE_USER' ,'ROLE_ADMIN', 'ROLE_ANONYMOUS')")
+                    .antMatchers("/orders/**", "/user/**")
+                    .access("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
                     .and()
                     .csrf().disable()
                     .httpBasic();

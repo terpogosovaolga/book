@@ -1,5 +1,6 @@
 package Dao;
 
+import classes.Attribute;
 import models.Book;
 
 import java.util.List;
@@ -28,6 +29,8 @@ public interface IBookDao {
     List<Book> getSmallBooks();
 
     List<Book> getBooksOfAuthor(String surname, String name);
+
+    List<Book> getBooksAfterSearchWithParams(List<Attribute> attrs);
 
     //  public List<Book> getPopularBooks();
   //  List<Book> getNewArrivals();
