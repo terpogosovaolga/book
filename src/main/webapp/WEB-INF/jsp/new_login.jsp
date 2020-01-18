@@ -30,8 +30,8 @@
                    autofocus="true"/>
             <input name="password" type="password" class="form-control" path="password" id="password" placeholder="Пароль"/>
             <span>${error}</span>
-            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
 
+            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
             <button class="btn btn-lg btn-primary btn-block" type="submit">Войти</button>
             <h4 class="text-center">Нет аккаунта? <a href="<c:url value='/user/register'/>">Регистрация</a></h4>
         </div>

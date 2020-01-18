@@ -17,6 +17,7 @@
         <link href="https://fonts.googleapis.com/css?family=Josefin+Sans:300,300i,400,400i,700,700i" rel="stylesheet">
         <!-- Stylesheets -->
         <style><%@include file="/css/bootstrap.min.css"%></style>
+        <style><%@include file="/css/myStile.css"%></style>
         <style><%@include file="/css/font-awesome.min.css"%></style>
         <style><%@include file="/css/flaticon.css"%></style>
         <style><%@include file="/css/slicknav.min.css"%></style>
@@ -42,15 +43,13 @@
                         <div class="col-xl-6 col-lg-5">
                             <form class="header-search-form">
                                 <input type="text" placeholder="Поиск в Книжном магазине...">
-                                <button><i class="flaticon-search"></i></button>
                             </form>
                         </div>
                         <div class="col-xl-4 col-lg-5">
                             <div class="user-panel">
                                 <div class="up-item">
-                                    <i class="flaticon-profile"></i>
                                     <c:if test="${not isUSer}">
-                                        <a href="<c:url value='/user/login'/>">Войти</a> или <a href="#">Зарегистрироваться</a>
+                                        <a href="<c:url value='/user/login'/>">Войти</a> или <a href="<c:url value='/user/register'/>">Зарегистрироваться</a>
                                     </c:if>
                                     <c:if test="${isUSer}">
                                         <a href="<c:url value='/logout'/>">Выйти</a>
@@ -129,7 +128,6 @@
                                 <div class="section-title">
                                     <h2>САМЫЕ ПОПУЛЯРНЫЕ КНИГИ</h2>
                                 </div>
-                                <div class="product-slider owl-carousel">
                                 <%Map<String,Object> models = (Map<String, Object>) request.getAttribute("models");
                                     List<Book> popBooks= (List<Book>) models.get("popularBooks");
                                     if(popBooks.size()!=0) {
@@ -138,20 +136,19 @@
                                         out.println("<div class='product-item'>");
                                             out.println("<div class='pi-pic'>\n" +
                                                 "<span>" + b.getFullNameOfAuthor() + "</span>\n" +
-                                                "<h2>" + b.getName() + "</h2>\n" +
+                                                "<h2 class='bookname'>" + b.getName() + "</h2>\n" +
                                                 "<p>" +b.getDescription()+ "</p>\n"+
                                             "</div>\n" +
                                             "<div class='pi-links'>\n" +
-                                                "<a href='<c:url value='basket/add/"+b.getId()+"'/>' class='add-card'><i class='flaticon-bag'></i><span>Добавить в корзину</span></a>\n" +
-                                                "<a href='<c:url value='basket/add/"+b.getId()+"'/>' class='wishlist-btn'><i class='flaticon-heart'></i></a>\n" +
-                                            "</div>\n" +
+                                                "<a class='addbasket' style='color: #f51167' href='basket/add/"+b.getId()+"'/>Добавить в корзину</a>\n" +
+                                                "</br><a class='addbasket' style='color: #f51167' href='book/edit/"+b.getId()+"'/>Изменить книгу</a>\n" +
+                                             "</div>\n" +
                                             "<div class='pi-text'>\n" +
-                                                "<h6>"+b.getCout()+"</h6>\n" +
+                                                "<h6 class='price'>"+b.getCout()+"</h6>\n" +
                                             "</div>\n"+
                                         "</div>\n");
                                         }
                                     }%>
-                                 </div>
                             </div>
          </section>
          <section class="top-letest-product-section">
@@ -174,11 +171,10 @@
                                                 "<p>" +b.getDescription()+ "</p>\n"+
                                                 "</div>\n" +
                                                 "<div class='pi-links'>\n" +
-                                                "<a href='<c:url value='basket/add/"+b.getId()+"'/>' class='add-card'><i class='flaticon-bag'></i><span>Добавить в корзину</span></a>\n" +
-                                                "<a href='<c:url value='basket/add/"+b.getId()+"'/>' class='wishlist-btn'><i class='flaticon-heart'></i></a>\n" +
+                                                "<a href='basket/add/"+b.getId()+"'/>Добавить в корзину</a>\n" +
                                                 "</div>\n" +
                                                 "<div class='pi-text'>\n" +
-                                                "<h6>"+b.getCout()+"</h6>\n" +
+                                                "<h6 class='price'>"+b.getCout()+"</h6>\n" +
                                                 "</div>\n"+
                                                 "</div>\n");
                                     }

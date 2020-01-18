@@ -16,216 +16,77 @@
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
-<head>
-    <title>Книжный магазин - Каталог</title>
-    <link href="https://fonts.googleapis.com/css?family=Comfortaa|Cormorant+Unicase|Montserrat|Montserrat+Alternates|Open+Sans+Condensed:300|Playfair+Display+SC|Poiret+One&display=swap" rel="stylesheet">
-    <style>
-    body {
-    background-color: #e9e8fa;
-    }
-    p:hover {
-    text-decoration: underline;
-    }
-    .memberOfMenu {
-    display: inline-block;
-    width: 24%;
-    color: black;
-    font-size: 20px;
-    font-family: 'Montserrat', sans-serif;
-    align: center;
-    margin-top: 10px;
-    margin-bottom: 10px;
-    height: 100%;
-    text-align: center;
+<head><c:set var="contextPath" value="${pageContext.request.contextPath}"/>
+    <title>Книжный Магазин - Главная</title>
+    <meta charset="utf-8">
+    <link href="img/favicon.ico" rel="shortcut icon"/>
+    <link href="https://fonts.googleapis.com/css?family=Josefin+Sans:300,300i,400,400i,700,700i" rel="stylesheet">
+    <!-- Stylesheets -->
+    <style><%@include file="/css/bootstrap.min.css"%></style>
+    <style><%@include file="/css/font-awesome.min.css"%></style>
+    <style><%@include file="/css/flaticon.css"%></style>
+    <style><%@include file="/css/slicknav.min.css"%></style>
+    <style><%@include file="/css/jquery-ui.min.css"%></style>
+    <style><%@include file="/css/owl.carousel.min.css"%></style>
+    <style><%@include file="/css/animate.css"%></style>
+    <style><%@include file="/css/style.css"%></style>
 
-    }
-    #this {
-        background-color: #1b1899; !important;
-    }
-    #this:hover {
-        background-color: #1a012e;
-    }
-    .memberOfMenu:hover {
-    background: #1b1899;
-    text-decoration: underline;
-    }
-    .menu {
-    background-color: #615fd4;
-    height: 100px;
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
-    }
-    .memberOfMenu a {
-    color: white;
-    text-decoration: none;
-    align: center;
-    font-family: 'Montserrat', sans-serif;
-    }
-
-
-    .search {
-        width: 100%;
-        height: 40px;
-        border: #1b1899;
-
-    }
-    .search input {
-        display: inline-block;
-        font-family: 'Montserrat', sans-serif;
-    }
-    .searchString {
-        width: 80%;
-        height: 40px;
-        font-size: 25px;
-        color: black;
-    }
-    .submit {
-        background-color: #1b1899;
-        color: white;
-        width: 18%;
-        height: 40px;
-        font-family: 'Playfair Display SC', serif;
-        font-size: 20px;
-    }
-
-    .submit:hover {
-        background-color: #1a012e;
-    }
-
-    .searchParams {
-        width: 100%;
-        width: 100%;
-        display: flex;
-        justify-content: space-between;
-        padding-bottom: 10px;
-       /* padding-top: 10px;*/
-    }
-    .searchParams_component {
-        display: inline-block;
-        padding: 10px;
-
-    }
-
-    .category {
-        color: black;
-        font-size: 18px;
-        font-family: 'Playfair Display SC', serif;
-    }
-    .searchParams_component_a {
-        display: inline-block;
-        background-color: #615fd4;
-        padding: 5px;
-        border-radius: 2px;
-        border: #1a012e 1px solid;
-        font-family: 'Montserrat', sans-serif;
-    }
-
-    .searchParams_component_a:hover {
-        background-color: #1b1899;
-        text-decoration: underline;
-
-    }
-
-    .searchParams_component_a a {
-        text-decoration: none;
-        color: white;
-
-    }
-    .book {
-        width: 40%;
-        display: inline-block;
-        margin: 20px;
-        padding: 20px;
-        background-color: #ffe3fc;
-        border-radius: 10px;
-        border: indianred solid 3px;
-    }
-
-    .booksAuthor {
-        font-size: 20px;
-        color: black;
-        font-family: 'Open Sans Condensed', sans-serif;
-    }
-
-    .bookName {
-        font-size: 25px;
-        color: #1a012e;
-        font-family: 'Playfair Display SC', serif;
-    }
-
-    .book a {
-        display: inline-block;
-        color: #1a012e;
-        text-decoration: none;
-        align: center;
-        }
-    .book label {
-        color: black;
-        font-size: 20px;
-        font-weight: bold;
-        padding: 3px;
-        font-family: 'Open Sans Condensed', serif;
-    }
-        .attr {
-            display: inline-block;
-            color: black;
-            font-size: 17px;
-            font-family: 'Open Sans Condensed', sans-serif;
-        }
-        .editBook {
-            color: #1a012e;
-            text-decoration: none;
-        }
-        .attributes{
-            margin: 5px;
-            padding: 15px;
-            background-color: #b3b1fa;
-            border-radius: 7px;
-        }
-        .desc {
-            font-family: 'Open Sans Condensed', sans-serif;
-            font-size: 20px;
-            color: black;
-        }
-
-        .pastParams {
-            background-color: #615fd4;
-            color: black;
-            padding: 3px;
-            display: inline-block;
-            border-radius: 2px;
-            border: 1px solid #4845ff;
-        }
-        .pastParams a {
-            text-decoration: none;
-            color: black;
-        }
-    </style>
+    <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+    <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 </head>
-<ul class='menu'>
-    <security:authorize access="hasAnyRole('ROLE_ADMIN','ROLE_SUPER_USER', 'ROLE_USER')" var= "isUSer"/>
-
-        <ul class='menu'>
-            <li class='memberOfMenu'><a href="<c:url value='//'/>">Главная</a></li>
-            <li class='memberOfMenu' id="this"><a href="<c:url value='//catalog'/>">Каталог</a></li>
-            <li class='memberOfMenu'><a href="<c:url value='/basket/get'/>">Корзина</a></li>
-            <li class='memberOfMenu'><a href="<c:url value='/basket/orders'/>">Мои заказы</a></li>
-            <c:if test="${isUSer}">
-                <li class='memberOfMenu'><a href="<c:url value='/logout'/>">Выйти</a></li>
-                <li class='memberOfMenu'><a href="<c:url value='/user'/>">Моя страница</a></li>
-            </c:if>
-            <!--<sec:authorize access="hasAnyRole('ROLE_ADMIN')">
-                <li class='memberOfMenu'><a href='/springMVC_war_exploded/admin'>Администратор</a></li>
-            </sec:authorize>-->
-            <c:if test="${not isUSer}">
-                <li class='memberOfMenu'><a href="<c:url value='user/login'/>">Войти</a></li>
-                <li class='memberOfMenu'><a href="<c:url value='/user/register'/>">Зарегистрироваться</a></li>
-            </c:if>
-        </ul>
-
-
-</ul>
+<body>
+<security:authorize access="hasAnyRole('ROLE_ADMIN','ROLE_SUPER_USER', 'ROLE_USER')" var= "isUSer"/>
+<header class="header-section">
+    <div class="header-top">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-2 text-center text-lg-left">
+                    <a href="<c:url value=''/>" class="site-logo">
+                        <img src="C:\Users\olyao\IdeaProjects\logo.png" alt="">
+                    </a>
+                </div>
+                <div class="col-xl-6 col-lg-5">
+                    <form class="header-search-form">
+                        <input type="text" placeholder="Поиск в Книжном магазине...">
+                        <button><i class="flaticon-search"></i></button>
+                    </form>
+                </div>
+                <div class="col-xl-4 col-lg-5">
+                    <div class="user-panel">
+                        <div class="up-item">
+                            <i class="flaticon-profile"></i>
+                            <c:if test="${not isUSer}">
+                                <a href="<c:url value='/user/login'/>">Войти</a> или <a href="<c:url value='/user/register'/>">Зарегистрироваться</a>
+                            </c:if>
+                            <c:if test="${isUSer}">
+                                <a href="<c:url value='/logout'/>">Выйти</a>
+                            </c:if>
+                        </div>
+                        <div class="up-item">
+                            <div class="shopping-card">
+                                <i class="flaticon-bag"></i>
+                                <span>0</span>
+                            </div>
+                            <a href="<c:url value='/basket'/>">Корзина</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <nav class="main-navbar">
+        <div class="container">
+            <ul class="main-menu">
+                <li><a href="<c:url value=''/>">Главная</a></li>
+                <li><a href="<c:url value='//catalog'/>">Каталог</a></li>
+                <c:if test="${isUSer}">
+                    <li><a href="<c:url value='//user'/>">Моя страница</a></li>
+                </c:if>
+                <li><a href="<c:url value='/basket/orders'/>">Мои заказы</a></li>
+            </ul>
+        </div>
+    </nav>
+</header>
 <form id='search' method='get' class="search">
     <p><input type="search" class="searchString" id='valueOfSearch' onkeyup="editLinksSearch(this.value)" name="q" placeholder="Знаете, какую книгу ищете? Введите ее название!"/>
         <input class='submit' type="submit" value="Найти"/></p>
@@ -245,7 +106,7 @@
     }
 %>
 
-<div class="searchParams">
+<!--<div class="searchParams">
     <div class="searchParams_component">
         <p class="category">Жанр</p>
         <div class="searchParams_component_a"><a href="<c:url value='/search/genre/novel'/>">романы</a></div>
@@ -272,7 +133,7 @@
         <div class="searchParams_component_a"><a href="<c:url value='/search/price/700'/>">Не дороже 700 рублей</a></div>
         <div class="searchParams_component_a"><a href="<c:url value='/search/price/1000'/>">Не дороже 1000 рублей</a></div>
     </div>
-</div>
+</div>-->
 
 
     <%

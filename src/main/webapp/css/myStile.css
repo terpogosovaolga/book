@@ -1,0 +1,30 @@
+
+.product-item:hover {
+    background-color: LightGrey; !important;
+}
+.price {
+    font-size: 25px; !important;
+    color: #f51167; !important;
+}
+
+.pi-links {
+    color: #f51167; !important;
+    font-family: 'Cormorant Unicase', serif;
+    font-size: 18px;
+}
+.a {
+    text-decoration: none; !important;
+}
+.addbasket {
+    color: #f51167; !important;
+
+}
+.addbasket:hover {
+    color: #282828; !important;
+}
+/*
+.pi-text {
+    font-size: 35px; !important;
+    color: #f51167;!important;
+
+}*/

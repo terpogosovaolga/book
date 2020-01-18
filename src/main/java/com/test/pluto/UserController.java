@@ -10,6 +10,7 @@ import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 import validators.UserValidator;
 
 import javax.annotation.security.RolesAllowed;
@@ -63,10 +64,10 @@ public class UserController {
         return "new_login";
     }
 
-    @GetMapping(value="/register")
-    public String displayRegister(Model model){
-        User user = new User();
-        model.addAttribute("userForm", user);
+    @RequestMapping(value = "/register", method = RequestMethod.GET)
+    public String registration(Model model) {
+        model.addAttribute("userForm", new User());
+
         return "registration";
     }
 
@@ -83,7 +84,7 @@ public class UserController {
         System.out.println(userForm.getEmail() + " " + userForm.getConfirmPassword());
         mySec.autoLogin(userForm.getEmail(), userForm.getConfirmPassword());
         System.out.println("autologinned");
-        return "index";
+        return displayUser();
     }
 
     @RequestMapping(value="")
